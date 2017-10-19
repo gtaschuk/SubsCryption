@@ -12,7 +12,7 @@ class InstanceWrapper extends Component {
       instanceLoaded: false,
       accounts: null,
       web3: null,
-      hubInstance: null,
+      planRegistryInstance: null,
       PlanShell: null
     }
   }
@@ -44,13 +44,13 @@ class InstanceWrapper extends Component {
           instanceLoaded: true,
           accounts: result.accounts,
           web3: result.web3,
-          hubInstance: result.hubInstance,
+          planRegistryInstance: result.planRegistryInstance,
           PlanShell: result.PlanShell,
         })
       )
 
       // set up listeners on the contract.
-      result.hubInstance.LogPlanCreated(
+      result.planRegistryInstance.LogPlanCreated(
         {}, { fromBlock: 0, toBlock: 'latest' }
       ).watch ( (err, response) => {
         console.log('EVENT LOG(LogPlanCreated):', response.args)
@@ -78,7 +78,7 @@ InstanceWrapper.childContextTypes = {
   instanceLoaded: PropTypes.bool,
   accounts: PropTypes.array,
   web3: PropTypes.object,
-  hubInstance: PropTypes.object,
+  planRegistryInstance: PropTypes.object,
   PlanShell: PropTypes.func,
 }
 
