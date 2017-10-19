@@ -5,6 +5,7 @@ import MenuItem from 'material-ui/MenuItem';
 import AppBar from 'material-ui/AppBar';
 import Avatar from 'material-ui/Avatar';
 import Blockies from 'react-blockies';
+import Identicon from './components/Identicon'
 
 import { spacing, typography } from 'material-ui/styles';
 import { white, blue600 } from 'material-ui/styles/colors';
@@ -88,9 +89,9 @@ class App extends Component {
       </div>
           <div style={styles.avatar.div}>
             <div style={styles.avatar.icon} className="blockies-circular">
-              <Blockies
-                scale={5}
-                seed={this.context.accounts[0]}
+              <Identicon
+                diameter={50}
+                address={this.context.accounts[0]}
               />
             </div>
             <span style={styles.avatar.span}>{this.context.accounts[0]}</span>
