@@ -210,6 +210,10 @@ module.exports = {
     new InterpolateHtmlPlugin({
       PUBLIC_URL: publicUrl
     }),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+    }),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,

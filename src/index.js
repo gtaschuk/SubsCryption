@@ -31,6 +31,8 @@ const store = createStore(
   )
 )
 
+window.jQuery = window.$;
+
 // Initialize react-router-redux.
 
 const history = syncHistoryWithStore(browserHistory, store)

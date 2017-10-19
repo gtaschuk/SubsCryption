@@ -1,7 +1,24 @@
 import React, { Component } from 'react'
 import ReactFlot from 'react-flot';
+require('../../node_modules/flot-axislabels/jquery.flot.axislabels.js');
 
 class SubscryptionPlot extends Component {
+
+  getValue(t) {
+    return this.props.h * (1 - ((this.props.w * (t - this.props.s)) / (1 + this.props.w * Math.abs(t - this.props.s)))) + this.props.b
+  }
+
+  getData() {
+    var data = [];
+    var startMonth = 0;
+    var endMonth = 12;
+    var secondsInMonth = 30 * 24 * 60 * 60;
+    for (var i = startMonth; i <= endMonth*5; i++) {
+      data.push([i/5, this.getValue(i/5)]);
+    }
+    return data;
+  }
+
   render() {
     var options = {
       series: {
@@ -9,20 +26,34 @@ class SubscryptionPlot extends Component {
           show: true
         },
         points: {
-          show: true
+          show: false
         }
       },
       grid: {
         hoverable: false,
-        clickable: false
-      }
-    } 
+        clickable: false,
+        backgroundColor: { colors: ["#fff", "#eee"] },
+        borderWidth: {
+          top: 1,
+          right: 1,
+          bottom: 2,
+          left: 2
+        }
+      },
+      xaxes: [{
+        axisLabel: 'Time (months)',
+      }],
+      yaxes: [{
+        position: 'left',
+        axisLabel: 'Price Ξ',
+      }]
+    }
 
-    var data = [{label:'test',data:[[0,0],[0,1],[1,3],[3,5]]}];
+    var data = [{ lines: { show: true, fill: true }, label: ' Price chart', data: this.getData() }];
 
     return (
-      <div> HOLAAA
-      <ReactFlot id="subscryption-chart" options={options} data={data} width="50%" height="100px" />
+      <div>
+        <ReactFlot id="subscryption-chart" options={options} data={data} width="100%" height="500px" />
       </div>
     )
   }

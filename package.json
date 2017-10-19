@@ -49,7 +49,9 @@
   },
   "dependencies": {
     "ethereum-blockies": "^0.1.1",
+    "flot-axislabels": "^1.0.0",
     "jazzicon": "^1.5.0",
+    "jquery": "^3.2.1",
     "material-ui": "^0.19.4",
     "react": "^15.4.2",
     "react-blockies": "^1.2.0",
