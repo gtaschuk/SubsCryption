@@ -1,44 +1,38 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import React from 'react'
+import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { syncHistoryWithStore } from 'react-router-redux'
-import { UserIsAuthenticated, UserIsNotAuthenticated } from './util/wrappers.js'
-import getWeb3 from './util/web3/getWeb3'
+import { createStore, applyMiddleware, compose } from 'redux'
+import thunkMiddleware from 'redux-thunk'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-// Layouts
+import InstanceWrapper from './InstanceWrapper'
 import App from './App'
-import Home from './layouts/home/Home'
-import Dashboard from './layouts/dashboard/Dashboard'
-import SignUp from './user/layouts/signup/SignUp'
-import Profile from './user/layouts/profile/Profile'
+import reducer from './reducers'
+import registerServiceWorker from './registerServiceWorker'
 
-// Redux Store
-import store from './store'
+import './index.css'
 
-// Initialize react-router-redux.
-const history = syncHistoryWithStore(browserHistory, store)
+// Redux DevTools
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-// Initialize web3 and set in Redux.
-getWeb3
-.then(results => {
-  console.log('Web3 initialized!')
-})
-.catch(() => {
-  console.log('Error in web3 initialization.')
-})
+const store = createStore(
+  reducer,
+  composeEnhancers(
+    applyMiddleware(
+      thunkMiddleware
+    )
+  )
+)
 
-ReactDOM.render((
-    <Provider store={store}>
-      <Router history={history}>
-        <Route path="/" component={App}>
-          <IndexRoute component={Home} />
-          <Route path="dashboard" component={UserIsAuthenticated(Dashboard)} />
-          <Route path="signup" component={UserIsNotAuthenticated(SignUp)} />
-          <Route path="profile" component={UserIsAuthenticated(Profile)} />
-        </Route>
-      </Router>
-    </Provider>
-  ),
+ReactDOM.render(
+  <Provider store={store}>
+    <InstanceWrapper>
+      <MuiThemeProvider>
+        <App/>
+      </MuiThemeProvider>
+    </InstanceWrapper>
+  </Provider>,
   document.getElementById('root')
 )
+
+registerServiceWorker()
