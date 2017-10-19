@@ -9,6 +9,7 @@ import Identicon from './components/Identicon'
 
 import { spacing, typography } from 'material-ui/styles';
 import { white, blue600 } from 'material-ui/styles/colors';
+import Assessment from 'material-ui/svg-icons/action/assessment';
 
 // Styles
 import './css/oswald.css'
@@ -32,6 +33,11 @@ class App extends Component {
     const paddingLeftDrawerOpen = 256;
 
     const styles = {
+      appBar: {
+        position: 'fixed',
+        top: 0,
+        overflow: 'hidden'
+      },
       container: {
         paddingLeft: this.state.open ? paddingLeftDrawerOpen : 0
       },
@@ -90,11 +96,12 @@ class App extends Component {
             </div>
             <span style={styles.avatar.span}>{this.context.accounts[0]}</span>
           </div>
-          <MenuItem containerElement={<Link to="/" />}>Home</MenuItem>
-          <MenuItem containerElement={<Link to="/dashboard" />}>Dashboard</MenuItem>
+          <MenuItem containerElement={<Link to="/admin" />} leftIcon={<Assessment />}>Home</MenuItem>
+          <MenuItem containerElement={<Link to="/admin/dashboard" />} leftIcon={<Assessment />}>Dashboard</MenuItem>
         </Drawer>
         <div style={styles.container}>
           <AppBar
+            style={styles.appBar}
             iconClassNameRight="muidocs-icon-navigation-expand-more"
             onLeftIconButtonTouchTap={this.handleToggle}
           />
