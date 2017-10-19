@@ -2,15 +2,17 @@ pragma solidity ^0.4.13;
 
 contract PlanI {
 
-    uint startingPrice;
-    uint floorPrice;
-    uint steepness;
-    uint inflectionPoint;
-    string planDescription;
+    uint public startingPrice;
+    uint public floorPrice;
+    uint public steepness;
+    uint public inflectionPoint;
+    string public planDescription;
 
-    uint serviceProviderFunds;
+    uint public serviceProviderFunds;
 
-    mapping (address => SubscriberInfo) subscribers;
+    address[] public subscribers;
+
+    mapping (address => SubscriberInfo) subscribersInfo;
 
     struct SubscriberInfo {
         // 0 -> not signed up
@@ -122,14 +124,25 @@ contract PlanI {
     /*
      * onlyOwner modifier
      */
-    function banSubscriber()  public;
+    function banSubscriber() public;
+
+    /*
+     * Calculate the un withdrawn balance in this Plan.
+     * This method iterates through all the users
+     */
+    function calculatePlanBalance() public constant;
 
     /**
-     * Withdraw funds for the plan owner.
+     * Withdraw funds for the plan owner for a subscriber
      * MODIFIDER: onlyOwner
      * These are the funds that have been used for all subscriptions.
      */
-    function withdrawFunds() public;
+    function withdrawFundsForSubscriber(address subscriber) public;
+
+    /*
+     * Withdraw the pre paid balances in the contract
+     */
+    function withdrawPrePaidBalance() public;
 
     /**
      * Allow a user to withdraw any unused balance.
