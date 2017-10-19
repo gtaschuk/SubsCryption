@@ -40,10 +40,11 @@ ReactDOM.render(
     <InstanceWrapper>
       <MuiThemeProvider>
         <Router history={history}>
-          <Route path="/" component={App}>
+          <Route path="/admin" component={App}>
             <IndexRoute component={Home} />
             <Route path="dashboard" component={Dashboard} />
           </Route>
+         
         </Router>
       </MuiThemeProvider>
     </InstanceWrapper>
