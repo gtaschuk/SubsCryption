@@ -48,8 +48,10 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "ethereum-blockies": "^0.1.1",
     "material-ui": "^0.19.4",
     "react": "^15.4.2",
+    "react-blockies": "^1.2.0",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.2",
     "react-router": "^3.0.2",
