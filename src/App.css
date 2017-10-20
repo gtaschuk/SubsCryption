@@ -1,5 +1,9 @@
 /* PAGE */
 
+body {
+  background-color: #e8e8e8;
+}
+
 body,
 .pure-g [class*=pure-u] {
   font-family: 'Open Sans', sans-serif;
