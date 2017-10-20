@@ -70,3 +70,8 @@ code {
 .blockies-circular canvas{
   border-radius: 50%;
 }
+
+.one-line div{
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

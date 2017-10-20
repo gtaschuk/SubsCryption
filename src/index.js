@@ -8,9 +8,11 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import InstanceWrapper from './InstanceWrapper'
+import SpotifyExample from './components/SpotifyExample'
 import App from './App'
 import reducer from './reducers'
 import registerServiceWorker from './registerServiceWorker'
+import logger from 'redux-logger'
 
 import './index.css'
 
@@ -26,7 +28,8 @@ const store = createStore(
   reducer,
   composeEnhancers(
     applyMiddleware(
-      thunkMiddleware
+      thunkMiddleware,
+      logger
     )
   )
 )
@@ -46,7 +49,8 @@ ReactDOM.render(
             <IndexRoute component={Home} />
             <Route path="dashboard" component={Dashboard} />
           </Route>
-         
+          <Route path="/website" component={SpotifyExample}>
+          </Route>
         </Router>
       </MuiThemeProvider>
     </InstanceWrapper>
