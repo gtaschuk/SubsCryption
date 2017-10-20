@@ -15,6 +15,7 @@ import registerServiceWorker from './registerServiceWorker'
 import logger from 'redux-logger'
 
 import './index.css'
+import 'flexboxgrid/css/flexboxgrid.css';
 
 import Home from './layouts/home/Home'
 import Plan from './layouts/plan/Plan'

@@ -5,13 +5,14 @@ import './Owned.sol';
 
 contract Plan is Owned {
 
-    int public initialSlope;
-    int public intermediateSlope;
-    uint public initialPhase;
-    uint public initialIntersection;
-    uint public intermediatePhase;
-    uint public intermediateIntersection;
-    uint public floorPrice;
+    int public h;
+    int public w;
+    int public s;
+    int public b;
+    int fixedPoint = 1000;
+    int scale = 100000000;
+    uint secondsInMonth = 30 days;
+    uint weiInFinney = 1 finney;
 
     string public name;
     string public planDescription;
@@ -20,7 +21,7 @@ contract Plan is Owned {
 
     address[] public subscribers;
 
-    mapping (address => SubscriberInfo) subscribersInfo;
+    mapping (address => SubscriberInfo) public subscribersInfo;
 
     struct SubscriberInfo {
         uint balance;
@@ -41,13 +42,10 @@ contract Plan is Owned {
     }
 
     event PlanCreatedLog(
-        int _initialSlope,
-        int _intermediateSlope,
-        uint _initialPhase,
-        uint _initialIntersection,
-        uint _intermediatePhase,
-        uint _intermediateIntersection,
-        uint _floorPrice,
+        int _h,
+        int _w,
+        int _s,
+        int _b,
         string _planName,
         string _planDescription);
     event getCostLog(uint subscriptionAge, uint cost);
@@ -71,57 +69,59 @@ contract Plan is Owned {
     event withdrawFundsForSubscriberLog(address subscriber,uint unwithdrawn, uint withdrawable);
     event withdrawPrePaidBalanceForServiceProviderLog(uint amount);
     event withdrawBalanceForSubscriberLog(address subscriber, uint balance, uint unwithdrawn, uint amount);
-    
+
     function Plan(
-        int _initialSlope,
-        int _intermediateSlope,
-        uint _initialPhase,
-        uint _initialIntersection,
-        uint _intermediatePhase,
-        uint _intermediateIntersection,
-        uint _floorPrice,
+        int _h,
+        int _w,
+        int _s,
+        int _b,
         string _planName,
         string _planDescription) public
     {
+        require(_h > 0);
+        require(_w > 0);
+        require(_s > 0);
+        require(_b > 0);
 
-        require(_initialSlope<=0);
-        require(_intermediateSlope<=0);
-
-        initialSlope = _initialSlope;
-        intermediateSlope = _intermediateSlope;
-        initialPhase = _initialPhase;
-        intermediatePhase = _intermediatePhase;
-        initialIntersection = _initialIntersection;
-        intermediateIntersection = _intermediateIntersection;
-        floorPrice = _floorPrice;
+        h = _h;
+        w = _w;
+        s = _s;
+        b = _b;
         planDescription = _planDescription;
         name = _planName;
-        
+
         PlanCreatedLog(
-            initialSlope,
-            intermediateSlope,
-            initialPhase,
-            initialIntersection,
-            intermediatePhase,
-            intermediateIntersection,
-            floorPrice,
+            h,
+            w,
+            s,
+            b,
             name,
             planDescription
         );
     }
 
     function getCost(uint subscriptionAge) constant public returns(uint cost) {
-        if(subscriptionAge > intermediatePhase){
-            cost = floorPrice;
+        int x = int(subscriptionAge);
+        int xs = x - s;
+        int n = (h * w * xs) / scale;
+
+        int absxs = xs;
+        if (xs < 0) {
+            absxs = xs * -1;
         }
-        else if(subscriptionAge > initialPhase){
-            cost = uint(intermediateSlope * int(subscriptionAge) + int(intermediateIntersection));
-        }
-        else{
-            cost = uint(initialSlope * int(subscriptionAge) + int(intermediatePhase));
-        }
-        
-        getCostLog(subscriptionAge, cost);
+
+        int p = w * absxs;
+        int d = 1 + (p / scale);
+
+        int div = (n * fixedPoint) / d;
+
+        int result = (fixedPoint * h) - div + (fixedPoint * b);
+
+        uint finneyResult = uint(result / fixedPoint);
+
+        uint weiResult = finneyResult * weiInFinney;
+
+        return weiResult;
     }
 
     /**
@@ -145,7 +145,7 @@ contract Plan is Owned {
             info.unwithdrawn += msg.value;
             info.startingTime = block.timestamp;
         }
-        
+
         addBalanceLog(info.balance, info.unwithdrawn, info.startingTime);
     }
 
@@ -206,7 +206,7 @@ contract Plan is Owned {
             info.balance += change;
             info.unwithdrawn += change;
             info.payUpfrontExpirationTime += timeSpan;
-            upfrontPayments += prepayAmount;            
+            upfrontPayments += prepayAmount;
         }
 
         payUpfrontLog(
@@ -225,91 +225,58 @@ contract Plan is Owned {
         }
         else{
             SubscriberInfo storage info  = subscribersInfo[subscriber];
-            isContinuous = info.payUpfrontExpirationTime < block.timestamp;          
+            isContinuous = info.payUpfrontExpirationTime < block.timestamp;
         }
-        
+
         isContinuousModeLog(subscriber, isContinuous);
     }
 
-    function calculateArea(uint start, uint end) public returns(uint area) {
-        require(start < end);
-        
-        if (start > intermediatePhase){
-            area = (end-start)*floorPrice;
-        }
-        else if(start > initialPhase){
-            if(end < intermediatePhase){
-                area = calculateSlopeColumnArea(start, end);
-            }
-
-            area = calculateSlopeColumnArea(start, intermediatePhase) + (end - intermediatePhase) * floorPrice;
-        }
-        else if (end < initialPhase) {
-            area = calculateSlopeColumnArea(start, end);
-        }
-        else {
-             area = calculateSlopeColumnArea(start, initialPhase)
-            + calculateSlopeColumnArea(initialPhase, end);
-        }
-        
-        calculateAreaLog(start, end, area);
+    function calculateArea(uint start, uint end) constant public returns(uint) {
+        uint diff = integral(int(end)) - integral(int(start));
+        uint weiDiff = diff * weiInFinney;
+        return weiDiff / secondsInMonth;
     }
 
-    function calculateSlopeColumnArea(uint start, uint end) returns(uint area){
-        uint endCost = getCost(end);
-        return (end-start)*endCost + ((end-start)*(getCost(start)-endCost)/2);
-    }
-
-    function getEndTime(uint start, uint balance)
-        constant
-        public
-        returns(uint end)
-    {
-        if(start>intermediatePhase){
-            return balance/floorPrice + start;
-        }
-
-        if(start > initialPhase){
-            uint intermediateArea = calculateArea(start, intermediatePhase);
-            if(intermediateArea > balance){
-                return getEndTimeHelper(balance, intermediateSlope, intermediateIntersection, start);
-            }
-
-            return (balance - intermediateArea)/floorPrice + start;
-        }
-
-        uint initialArea = calculateArea(start, initialPhase);
-        if(initialArea > balance){
-            return getEndTimeHelper(balance, initialSlope, initialIntersection, start);
-        }
-
-        return getEndTimeHelper(balance - initialArea, intermediateSlope, intermediateIntersection, start);
-
-    }
-
-    function getEndTimeHelper(uint balance, int slope, uint intersection, uint start) returns(uint end){
-        int z = slope * int(start ** 2) / 2 + int(intersection) * int(start) - int(balance);
-        return sqrt(uint(int(uint(int(intersection) / slope) ** 2) + z / slope)) - uint(int(intersection) / slope);
-    }
-
-    function sqrt(uint x) returns (uint y) {
-        uint z = (x + 1) / 2;
-        y = x;
-        while (z < y) {
-            y = z;
-            z = (x / z + z) / 2;
+    function abs(int x) constant private returns(int) {
+        if (x < 0) {
+            return x * -1;
+        } else {
+            return x;
         }
     }
 
-    /**
-     * Calculate when the balance expires or until when the user
-     * has paid.
-     * @return the blockNumber when the subscription expires
-     */
-    function calculateExpiration(address subscriber) public constant returns (uint blockNumber) {
-        SubscriberInfo storage info  = subscribersInfo[subscriber];
-        uint startTime = max(info.payUpfrontExpirationTime, info.startingTime);
-        return getEndTime(info.balance, startTime);
+    function integral(int x) public constant returns(uint){
+        int xs = abs(x - s);
+        int a = xs + s;
+        int c = (w * a) / scale;
+        int sw = (s * w) / scale;
+        int d = abs(c - sw + 1);
+        int e = (h * log(d * 1000000)) / 1000000;
+        int f = (e * scale) / w;
+        int g = h * abs(x - s);
+        int i = x * (h + b);
+        return uint(f - g + i);
+    }
+
+    function log(int x) constant returns(int) {
+        x = x;
+        int l = 0;
+        while (x >= 1500000) {
+            l = l + 405465;
+            x = (x * 2) / 3;
+        }
+        x = x - 1000000;
+        int y = x;
+        int i = 1;
+        while(i < 10) {
+            l = l + (y / i);
+            i = i + 1;
+            y = (y * x) / 1000000;
+            l = l - (y / i);
+            i = i + 1;
+            y = (y * x) / 1000000;
+        }
+        return l;
     }
 
     function max(uint a, uint b) private returns (uint) {
@@ -334,7 +301,18 @@ contract Plan is Owned {
         address subscriber,
         uint targetTime
     ) public constant returns (bool isIndeed) {
-        return calculateExpiration(subscriber) > targetTime;
+        SubscriberInfo storage info = subscribersInfo[subscriber];
+        if (targetTime < info.payUpfrontExpirationTime) {
+            return true;
+        }
+        uint startTime = max(info.payUpfrontExpirationTime, info.startingTime);
+        require(targetTime > startTime);
+        uint cost = calculateArea(startTime, targetTime);
+        if (info.balance > cost) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -398,7 +376,7 @@ contract Plan is Owned {
         uint withdrawable = info.unwithdrawn - getBalance(subscriber);
         info.unwithdrawn -= withdrawable;
         _owner.transfer(withdrawable);
-        withdrawFundsForSubscriberLog(subscriber, withdrawn, withdrawable);
+        withdrawFundsForSubscriberLog(subscriber, info.unwithdrawn, withdrawable);
     }
 
     /*
@@ -426,7 +404,13 @@ contract Plan is Owned {
         info.balance -= amount;
         info.unwithdrawn -= amount;
         msg.sender.transfer(amount);
-        
+
         withdrawBalanceForSubscriberLog(msg.sender, info.balance, info.unwithdrawn, amount);
+    }
+
+    function getSubscribersCount() public constant
+    returns(uint amount)
+    {
+        return subscribers.length;
     }
 }

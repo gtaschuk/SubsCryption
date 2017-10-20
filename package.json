@@ -50,6 +50,7 @@
   "dependencies": {
     "bignumber": "^1.1.0",
     "ethereum-blockies": "^0.1.1",
+    "flexboxgrid": "^6.3.1",
     "flot-axislabels": "^1.0.0",
     "jazzicon": "^1.5.0",
     "jquery": "^3.2.1",
