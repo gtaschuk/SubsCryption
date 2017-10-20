@@ -1,0 +1,133 @@
+@import url(~normalize.css/normalize.css);
+@import url(~font-awesome/css/font-awesome.css);
+* {
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,PingFang SC,Source Han Sans CN,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+.player-container, .player-container .info-and-control .time-and-volume, .player-container .info-and-control .control-container, .player-container .info-and-control .control-container .mode-control, .player-container .info-and-control .control-container .controls {
+  display: -ms-flexbox;
+  display: flex; }
+
+.player-container .info-and-control {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column; }
+
+.hide, .player-container .info-and-control .time-and-volume .volume-container {
+  display: none; }
+
+.icon {
+  cursor: pointer;
+  color: #4a4a4a; }
+
+.player-container {
+  -ms-flex-wrap: wrap-reverse;
+      flex-wrap: wrap-reverse;
+  -ms-flex-pack: center;
+      justify-content: center; }
+  .player-container .info-and-control {
+    width: 100%; }
+    .player-container .info-and-control .music-info {
+      text-align: center; }
+      .player-container .info-and-control .music-info .title, .player-container .info-and-control .music-info .artist {
+        font-weight: 400;
+        -o-text-overflow: ellipsis;
+           text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap; }
+      .player-container .info-and-control .music-info .title {
+        margin-bottom: 0;
+        color: #030303;
+        font-size: 1.5em; }
+      .player-container .info-and-control .music-info .artist {
+        color: #4a4a4a;
+        font-size: 1em; }
+    .player-container .info-and-control .time-and-volume {
+      height: 1.6em;
+      line-height: 1.6em;
+      color: #9b9b9b;
+      font-size: 0.8em; }
+      .player-container .info-and-control .time-and-volume .left-time {
+        width: 3.2em;
+        margin-right: 10px;
+        text-align: left;
+        font-weight: 400; }
+      .player-container .info-and-control .time-and-volume .volume-container .volume-icon i {
+        color: #9b9b9b; }
+      .player-container .info-and-control .time-and-volume .volume-container .volume-wrapper {
+        width: 50px;
+        padding-left: 2px;
+        opacity: 0;
+        -webkit-transition: opacity .5s linear;
+        -o-transition: opacity .5s linear;
+        transition: opacity .5s linear; }
+        .player-container .info-and-control .time-and-volume .volume-container .volume-wrapper .progress-container {
+          height: 2px;
+          margin-top: calc(0.8em - 1px);
+          background-color: #e5e5e5; }
+          .player-container .info-and-control .time-and-volume .volume-container .volume-wrapper .progress-container .progress {
+            height: 2px; }
+      .player-container .info-and-control .time-and-volume .volume-container:hover .volume-wrapper {
+        opacity: 1; }
+    .player-container .info-and-control .progress-container {
+      width: 100%;
+      height: 3px;
+      background-color: #dadada;
+      cursor: pointer; }
+      .player-container .info-and-control .progress-container .progress {
+        height: 100%;
+        background-color: #9b9b9b; }
+    .player-container .info-and-control .control-container {
+      position: relative;
+      width: 100%;
+      margin-top: 1.3em;
+      -ms-flex-pack: center;
+          justify-content: center;
+      font-size: 1.8em; }
+      .player-container .info-and-control .control-container .mode-control {
+        position: absolute;
+        left: 0; }
+      .player-container .info-and-control .control-container .controls {
+        width: 240px;
+        -ms-flex-pack: distribute;
+            justify-content: space-around; }
+  .player-container .cover-container {
+    width: 240px;
+    height: 240px;
+    overflow: hidden; }
+    .player-container .cover-container .cover {
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background-size: cover; }
+
+@media (min-width: 576px) {
+  .player-container .info-and-control {
+    width: 296px; }
+    .player-container .info-and-control .music-info {
+      text-align: start; }
+    .player-container .info-and-control .time-and-volume .volume-container {
+      display: -ms-flexbox;
+      display: flex; }
+    .player-container .info-and-control .progress-container {
+      height: 1px; }
+      .player-container .info-and-control .progress-container .progress {
+        height: 100%; }
+    .player-container .info-and-control .control-container {
+      -ms-flex-pack: justify;
+          justify-content: space-between; }
+      .player-container .info-and-control .control-container .mode-control {
+        position: relative; }
+      .player-container .info-and-control .control-container .controls {
+        width: 120px;
+        -ms-flex-pack: justify;
+            justify-content: space-between; }
+  .player-container .cover-container {
+    margin-left: 40px; } }
+
+@media (min-width: 768px) {
+  .player-container .info-and-control {
+    width: 430px; } }
