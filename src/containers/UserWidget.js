@@ -42,6 +42,7 @@ class UserWidget extends Component {
         <h4>Remaining Subscription:</h4>
         <RaisedButton label="Modal Dialog" onClick={this.handleOpen} />
         <Dialog
+          className="preference-dialog"
           actions={actions}
           modal={true}
           open={this.state.isModalOpen}
