@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import RaisedButton from 'material-ui/RaisedButton';
 import AddBalance from './AddBalance'
+import WithdrawBalance from './WithdrawBalance'
 
-const WithdrawBalance = () => {
-  return <p>withdraw</p>
-}
+
 const PayUpFront = () => {
   return <p>pay upfront</p>
 }
