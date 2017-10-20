@@ -10,13 +10,10 @@ module.exports = (deployer, network, accounts) => {
   const admin = accounts[0]
   const plan1Owner = accounts[1]
   const plan2Owner = accounts[2]
-  const initialSlope = -1
-  const intermediateSlope = -1
-  const initialPhase = 1
-  const initialIntersection = 10000
-  const intermediatePhase = 2
-  const intermediateIntersection =  10000
-  const floorPrice = 5000
+  const h = 450;
+  const w = 15;
+  const s = 2592000; // seconds in a month
+  const b = 200;
 
   const planDescription = "This is a test plan...."
 
@@ -28,24 +25,18 @@ module.exports = (deployer, network, accounts) => {
     deployedPlanRegistry = planRegistryInstance
 
     return Promise.allNamed({
-      operator1tx: () => deployedPlanRegistry.createNewPlan(initialSlope
-        , intermediateSlope
-        , initialPhase
-        , initialIntersection
-        , intermediatePhase
-        , intermediateIntersection
-        , floorPrice
+      operator1tx: () => deployedPlanRegistry.createNewPlan(h
+        , w
+        , s
+        , b
         , "Spotify plan"
         , planDescription
         , plan1Owner
         , { from: admin }),
-      operator2tx: () => deployedPlanRegistry.createNewPlan(initialSlope
-        , intermediateSlope
-        , initialPhase
-        , initialIntersection
-        , intermediatePhase
-        , intermediateIntersection
-        , floorPrice
+      operator2tx: () => deployedPlanRegistry.createNewPlan(h
+        , w
+        , s
+        , b
         , "Netflix plan"
         , planDescription
         , plan2Owner
