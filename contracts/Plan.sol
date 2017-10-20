@@ -49,6 +49,7 @@ contract Plan is Owned {
         string _planName,
         string _planDescription);
     event getCostLog(uint subscriptionAge, uint cost);
+    event newUserLog(address subscriber);
     event addBalanceLog(uint addedBalance, uint unwithdrawn, uint startTime);
     event payUpfrontLog(
         uint balance,
@@ -136,6 +137,7 @@ contract Plan is Owned {
             info.balance = msg.value;
             info.startingTime = block.timestamp;
             info.unwithdrawn = msg.value;
+            newUserLog(msg.sender);
             subscribers.push(msg.sender);
         } else if (isActive(msg.sender, block.timestamp)) {
             info.balance += msg.value;
