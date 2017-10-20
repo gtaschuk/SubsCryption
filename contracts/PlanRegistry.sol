@@ -7,25 +7,20 @@ contract PlanRegistry {
     event LogPlanCreated(address plan, address owner);
 
     function createNewPlan(
-        int _initialSlope,
-        int _intermediateSlope,
-        uint _initialPhase,
-        uint _initialIntersection,
-        uint _intermediatePhase,
-        uint _intermediateIntersection,
-        uint _floorPrice,
+        int _h,
+        int _w,
+        int _s,
+        int _b,
         string _planName,
         string _planDescription,
         address owner) public returns (Plan) {
-        Plan newPlan = new Plan(_initialSlope,
-          _intermediateSlope,
-          _initialPhase,
-          _initialIntersection,
-          _intermediatePhase,
-          _intermediateIntersection,
-          _floorPrice,
-          _planName,
-          _planDescription
+        Plan newPlan = new Plan(
+            _h,
+            _w,
+            _s,
+            _b,
+            _planName,
+            _planDescription
         );
         newPlan.setOwner(owner);
         LogPlanCreated(address(newPlan), owner);
