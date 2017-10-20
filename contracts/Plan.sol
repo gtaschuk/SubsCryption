@@ -39,6 +39,8 @@ contract Plan is Owned {
         _;
     }
 
+    
+
     function Plan(
         int _initialSlope,
         int _intermediateSlope,

@@ -11,6 +11,7 @@ contract('Plan Contract', accounts => {
     var instance;
 
     var subscriptionAge = 100;
+    var shouldBeCost = 1000;
     // You *need to return* the whole Promise chain
 
     return Plan.deployed()
@@ -19,16 +20,12 @@ contract('Plan Contract', accounts => {
             return instance.getCost.call( subscriptionAge, { from: accounts[0] });
         })
         .then(cost => {
-            assert.equal(cost, 10000, "cost isnt equal to 10000");
-            return instance.doSomething(arg1, { from: accounts[0] });
+            assert.equal(cost, shouldBeCost, "cost isnt equal to 10000");
+            return instance.call.addBalance(100);
         })
-        .then(txInfo => {
-            return instance.getSomethingElse.call();
+        .then(balance => {
+            assert.equal(instance.balance, 100, "Balance is not updating properly");
         })
-        .then(resultValue => {
-            assert.equal(resultValue.toString(10), "3", "there should be exactly 3 things at this stage");
-            // Do not return anything on the last callback or it will believe there is an error.
-        });
     });
 
 })
