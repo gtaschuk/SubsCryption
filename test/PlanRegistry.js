@@ -30,10 +30,10 @@ contract('PlanRegistry', accounts => {
                     initialIntersection,
                     intermediatePhase,
                     intermediateIntersection,
-                    uint _floorPrice,
-                    string _planDescription,
-                    address owner
-                    , { from: accounts[0] });
+                    floorPrice,
+                    planDescription,
+                    owner,
+                    { from: accounts[0] });
                 })
         .then(success => {
             assert.isTrue(success, "failed to do this");
