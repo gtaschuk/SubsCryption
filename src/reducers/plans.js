@@ -1,18 +1,20 @@
+import { actions } from '../actions'
 const initialState = {
-    addresses: []
+    planArray: []
 }
 
-const plansReducer = (state = initialState, action) => {
+const planArrayReducer = (state = initialState, action) => {
     switch (action.type) {
-        case "PLAN_CREATED":
-            var addresses = state.addresses.slice();
-            addresses.push(action.payload);
+        case actions.NEW_PLAN_CREATED:
+            const planArray = (state.planArray.indexOf(action.payload) >= 0)?
+              state.planArray
+              : [...state.planArray, action.payload]
             return Object.assign({}, state, {
-                addresses: addresses
+                planArray
             })
         default:
             return state;
     }
 }
 
-export default plansReducer
+export default planArrayReducer

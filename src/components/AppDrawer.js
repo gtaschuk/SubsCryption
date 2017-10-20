@@ -16,7 +16,6 @@ import SettingsApplications from 'material-ui/svg-icons/action/settings-applicat
 class AppDrawer extends Component {
 
     render() {
-
         const styles = {
             logo: {
                 cursor: 'pointer',
@@ -60,7 +59,7 @@ class AppDrawer extends Component {
         return (
             <Drawer open={this.props.open}>
                 <div style={styles.logo}>
-                    Suscryption</div>
+                    Subscryption</div>
                 <div style={styles.avatar.div}>
                     <div style={styles.avatar.icon} className="blockies-circular">
                         <Identicon
@@ -74,7 +73,7 @@ class AppDrawer extends Component {
                 <MenuItem leftIcon={<Assessment />} primaryText="Subscryptions" primaryTogglesNestedList={true}
                     nestedItems={
                         this.props.plans.filter(plan => true || plan.owner === this.context.accounts[0]).map(function (plan) {
-                            return <MenuItem className="one-line" key={plan.plan} containerElement={<Link to="/admin/dashboard" />}>{plan.plan}</MenuItem>
+                            return <MenuItem className="one-line" key={plan.plan} containerElement={<Link to={"/admin/plan/" + plan.plan} />}>{plan.name || plan.plan}</MenuItem>
                         })}
                 >
                 </MenuItem>
@@ -93,7 +92,7 @@ AppDrawer.contextTypes = {
 
 const mapStateToProps = state => {
     return {
-        plans: state.plans.addresses
+        plans: state.plans.plansArray
     }
 }
 

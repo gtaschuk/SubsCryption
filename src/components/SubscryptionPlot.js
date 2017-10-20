@@ -14,7 +14,7 @@ class SubscryptionPlot extends Component {
     var endMonth = 12;
     var secondsInMonth = 30 * 24 * 60 * 60;
     for (var i = startMonth; i <= endMonth * 5; i++) {
-      data.push([i / 5, this.getValue(i / 5)]);
+      data.push([i / 5, this.getValue(secondsInMonth*i / 5)/1000]);
     }
     return data;
   }
