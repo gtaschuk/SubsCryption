@@ -55,9 +55,7 @@ class InstanceWrapper extends Component {
       ).watch ( (err, response) => {
         console.log('EVENT LOG(LogPlanCreated):', response.args)
 
-        const {
-        } = response.args
-        // do some kind of dispatch using the above response args
+        this.props.addPlan(response.args);
       })
 
       // TODO:: get this working for removing toll booth operators.
@@ -82,4 +80,18 @@ InstanceWrapper.childContextTypes = {
   PlanShell: PropTypes.func,
 }
 
-export default connect()(InstanceWrapper)
+const mapStateToProps = state => {
+  return {
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addPlan : (plan) => dispatch({
+      type : 'PLAN_CREATED',
+      payload:plan
+    })
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(InstanceWrapper)

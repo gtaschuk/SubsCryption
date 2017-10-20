@@ -11,6 +11,7 @@ import InstanceWrapper from './InstanceWrapper'
 import App from './App'
 import reducer from './reducers'
 import registerServiceWorker from './registerServiceWorker'
+import logger from 'redux-logger'
 
 import './index.css'
 
@@ -26,7 +27,8 @@ const store = createStore(
   reducer,
   composeEnhancers(
     applyMiddleware(
-      thunkMiddleware
+      thunkMiddleware,
+      logger
     )
   )
 )
