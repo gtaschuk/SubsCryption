@@ -341,6 +341,17 @@ contract Plan is Owned {
         return 0;
     }
 
+    function getBalance(address subscriber, uint timestamp) public constant returns (uint balance) {
+        SubscriberInfo storage info  = subscribersInfo[subscriber];
+        uint startTime = max(info.payUpfrontExpirationTime, info.startingTime);
+        uint used = calculateArea(startTime, timestamp);
+        if (info.balance > used) {
+            return info.balance - used;
+        }
+
+        return 0;
+    }
+
     /**
      * Get the cost for a prepay time span. Based on your startingTime if active.
      *
@@ -367,7 +378,7 @@ contract Plan is Owned {
 
     /**
      * Withdraw funds for the plan owner for a subscriber
-     * These are the funds that have been used for all subscriptions.
+     * These are the funds that have been used a subscription.
      */
     function withdrawFundsForSubscriber(address subscriber) fromOwner public {
         SubscriberInfo storage info  = subscribersInfo[subscriber];
@@ -400,7 +411,9 @@ contract Plan is Owned {
     function withdrawBalance(uint amount) fromSubscriber public {
         SubscriberInfo storage info  = subscribersInfo[msg.sender];
         uint remainingBalance = getBalance(msg.sender);
-        require(amount <= remainingBalance);
+        if (amount >= remainingBalance) {
+            amount = remainingBalance;
+        }
         info.balance -= amount;
         info.unwithdrawn -= amount;
         msg.sender.transfer(amount);
