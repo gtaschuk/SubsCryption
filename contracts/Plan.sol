@@ -51,8 +51,15 @@ contract Plan is Owned {
         string _planName,
         string _planDescription);
     event getCostLog(uint subscriptionAge, uint cost);
-    event addBalanceLog(uint addedBalance);
-    event payUpfrontLog(uint timeSpan, uint prepayAmount);
+    event addBalanceLog(uint addedBalance, uint unwithdrawn, uint startTime);
+    event payUpfrontLog(
+        uint balance,
+        uint unwithdrawn,
+        uint payUpfrontExpirationTime,
+        uint upfrontPayments,
+        uint timeSpan,
+        uint prepayAmount
+    );
     event isContinuousModeLog(address subscriber, bool isContinuous);
     event calculateAreaLog(uint startTime, uint endTime, uint area);
     event getEndTimeLog(uint startTime, uint balance, uint endTime);
@@ -61,9 +68,9 @@ contract Plan is Owned {
     event getBalanceLog(address subscriber, uint balance);
     event getPrepayAmountLog(uint prepayAmount, uint timeSpan, uint amount);
     event calculatePlanBalanceLog(uint BalanceOftheServiceProvider);
-    event withdrawFundsForSubscriberLog(address subscriber, uint withdrawable);
+    event withdrawFundsForSubscriberLog(address subscriber,uint unwithdrawn, uint withdrawable);
     event withdrawPrePaidBalanceForServiceProviderLog(uint amount);
-    event withdrawBalanceForSubscriberLog(uint amount);
+    event withdrawBalanceForSubscriberLog(address subscriber, uint balance, uint unwithdrawn, uint amount);
     
     function Plan(
         int _initialSlope,
@@ -104,15 +111,17 @@ contract Plan is Owned {
     }
 
     function getCost(uint subscriptionAge) constant public returns(uint cost) {
-      if(subscriptionAge > intermediatePhase){
-        return floorPrice;
-      }
-
-      if(subscriptionAge > initialPhase){
-        return uint(intermediateSlope * int(subscriptionAge) + int(intermediateIntersection));
-      }
-
-      return uint(initialSlope * int(subscriptionAge) + int(intermediatePhase));
+        if(subscriptionAge > intermediatePhase){
+            cost = floorPrice;
+        }
+        else if(subscriptionAge > initialPhase){
+            cost = uint(intermediateSlope * int(subscriptionAge) + int(intermediateIntersection));
+        }
+        else{
+            cost = uint(initialSlope * int(subscriptionAge) + int(intermediatePhase));
+        }
+        
+        getCostLog(subscriptionAge, cost);
     }
 
     /**
@@ -136,6 +145,8 @@ contract Plan is Owned {
             info.unwithdrawn += msg.value;
             info.startingTime = block.timestamp;
         }
+        
+        addBalanceLog(info.balance, info.unwithdrawn, info.startingTime);
     }
 
     /**
@@ -177,10 +188,8 @@ contract Plan is Owned {
             info.balance = change;
             info.unwithdrawn += change;
             upfrontPayments += prepayAmount;
-            return;
         }
-
-        if (isContinuousMode(msg.sender)) {
+        else if (isContinuousMode(msg.sender)) {
             prepayAmount = getPrepayAmount(block.timestamp, timeSpan);
             require(prepayAmount <= msg.value);
             change =  msg.value - prepayAmount;
@@ -188,48 +197,62 @@ contract Plan is Owned {
             info.unwithdrawn += change;
             info.payUpfrontExpirationTime = block.timestamp + timeSpan;
             upfrontPayments += prepayAmount;
-            return;
+        }
+        else{
+            // otherwise it's in prepayment mode
+            prepayAmount = getPrepayAmount(info.payUpfrontExpirationTime, timeSpan);
+            require(prepayAmount <= msg.value);
+            change =  msg.value - prepayAmount;
+            info.balance += change;
+            info.unwithdrawn += change;
+            info.payUpfrontExpirationTime += timeSpan;
+            upfrontPayments += prepayAmount;            
         }
 
-        // otherwise it's in prepayment mode
-        prepayAmount = getPrepayAmount(info.payUpfrontExpirationTime, timeSpan);
-        require(prepayAmount <= msg.value);
-        change =  msg.value - prepayAmount;
-        info.balance += change;
-        info.unwithdrawn += change;
-        info.payUpfrontExpirationTime += timeSpan;
-        upfrontPayments += prepayAmount;
+        payUpfrontLog(
+            info.balance,
+            info.unwithdrawn,
+            info.payUpfrontExpirationTime,
+            upfrontPayments,
+            timeSpan,
+            prepayAmount
+        );
     }
 
-    function isContinuousMode(address subscriber) constant public returns(bool) {
-      if (!isActive(subscriber, block.timestamp)) {
-        return false;
-      }
-
-      SubscriberInfo storage info  = subscribersInfo[subscriber];
-      return info.payUpfrontExpirationTime < block.timestamp;
+    function isContinuousMode(address subscriber) constant public returns(bool isContinuous) {
+        if (!isActive(subscriber, block.timestamp)) {
+            isContinuous = false;
+        }
+        else{
+            SubscriberInfo storage info  = subscribersInfo[subscriber];
+            isContinuous = info.payUpfrontExpirationTime < block.timestamp;          
+        }
+        
+        isContinuousModeLog(subscriber, isContinuous);
     }
 
     function calculateArea(uint start, uint end) public returns(uint area) {
         require(start < end);
+        
         if (start > intermediatePhase){
-            return (end-start)*floorPrice;
+            area = (end-start)*floorPrice;
         }
-
-        if(start > initialPhase){
+        else if(start > initialPhase){
             if(end < intermediatePhase){
-                return calculateSlopeColumnArea(start, end);
+                area = calculateSlopeColumnArea(start, end);
             }
 
-            return calculateSlopeColumnArea(start, intermediatePhase) + (end - intermediatePhase) * floorPrice;
+            area = calculateSlopeColumnArea(start, intermediatePhase) + (end - intermediatePhase) * floorPrice;
         }
-
-        if (end < initialPhase) {
-            return calculateSlopeColumnArea(start, end);
+        else if (end < initialPhase) {
+            area = calculateSlopeColumnArea(start, end);
         }
-
-        return calculateSlopeColumnArea(start, initialPhase)
+        else {
+             area = calculateSlopeColumnArea(start, initialPhase)
             + calculateSlopeColumnArea(initialPhase, end);
+        }
+        
+        calculateAreaLog(start, end, area);
     }
 
     function calculateSlopeColumnArea(uint start, uint end) returns(uint area){
@@ -375,6 +398,7 @@ contract Plan is Owned {
         uint withdrawable = info.unwithdrawn - getBalance(subscriber);
         info.unwithdrawn -= withdrawable;
         _owner.transfer(withdrawable);
+        withdrawFundsForSubscriberLog(subscriber, withdrawn, withdrawable);
     }
 
     /*
@@ -385,6 +409,7 @@ contract Plan is Owned {
         uint amount = upfrontPayments;
         upfrontPayments = 0;
         _owner.transfer(amount);
+        withdrawPrePaidBalanceForServiceProviderLog(amount);
     }
 
     /**
@@ -401,5 +426,7 @@ contract Plan is Owned {
         info.balance -= amount;
         info.unwithdrawn -= amount;
         msg.sender.transfer(amount);
+        
+        withdrawBalanceForSubscriberLog(msg.sender, info.balance, info.unwithdrawn, amount);
     }
 }
