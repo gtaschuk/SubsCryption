@@ -1,6 +1,6 @@
 pragma solidity ^0.4.13;
 
-contract Plan {
+contract PlanI {
 
     uint public startingPrice;
     uint public floorPrice;
@@ -40,25 +40,7 @@ contract Plan {
      *
      * - Add to the balance
      */
-    function addBalance() public payable{
-        SubscriberInfo storage info  = subscribersInfo[msg.sender];
-        if(info.status==0){
-            info.balance = msg.value;
-            info.status = 2;
-            info.startingTime = block.timestamp;
-            info.unwithdrawn = msg.value;
-            subscribers.push(msg.sender);
-        }
-        else if(isActive(msg.sender,block.timestamp)) {
-            info.balance += msg.value;
-            info.unwithdrawn +=msg.value;
-        }
-        else {
-            info.balance = msg.value;
-            info.unwithdrawn += msg.value;
-            info.startingTime = block.timestamp;
-        }
-    }
+    function addBalance() public payable;
 
     /**
      * Suscribe a user to a plan.
@@ -68,6 +50,7 @@ contract Plan {
      *  - You set the startingTime to the currentTime
      *  - You calculate the expirationTime based on the prePayAmount
      *
+     * If is active:
      * If startingTime is set:
      *  - Calcualte the area from startingTime to currentTime
      *  - Substract this area from the balance
@@ -78,24 +61,7 @@ contract Plan {
      *
      * @param timeSpan how long you want to pre pay for
      */
-    function payUpfront(uint timeSpan) public payable {
-        uint prePayAmount = getPrepayAmount(timeSpan);
-        require(prepayAmount <= msg.value);
-        uint change =  msg.value - prepayAmount;
-        SubscriberInfo storage info  = subscribersInfo[msg.sender];
-        if(!isActive(msg.sender, block.timestamp)){
-            info.startingTime = block.timestamp;
-            info.payUpfrontExpirationTime = info.startingTime + timeSpan;
-            info.balance += change;
-        }
-        else if(info.startingTime != 0){
-            info.balance -= calculateArea(info.startingTime, block.timestamp);
-            info.expirationTime =  
-        }
-        
-    }
-    
-    function calculateArea(uint start, uint end) public returns(uint);
+    function payUpfront(uint timeSpan) public payable;
 
     /**
      * Calculate when the balance expires or until when the user
@@ -150,6 +116,15 @@ contract Plan {
         uint timeSpan
     ) public constant returns (uint amount);
 
+    /*
+     * onlySubscriber modifier
+     */
+    function suspendSubscription() public;
+
+    /*
+     * onlyOwner modifier
+     */
+    function banSubscriber() public;
 
     /*
      * Calculate the un withdrawn balance in this Plan.
