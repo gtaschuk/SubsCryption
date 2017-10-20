@@ -62,6 +62,7 @@ contract Plan is Owned {
         planDescription = _planDescription;
         
     }
+    
     function getCost(uint subscriptionAge) constant public returns(uint cost) {
       if(subscriptionAge > intermediatePhase){
         return floorPrice;
