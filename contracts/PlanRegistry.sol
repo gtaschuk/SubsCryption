@@ -14,6 +14,7 @@ contract PlanRegistry {
         uint _intermediatePhase,
         uint _intermediateIntersection,
         uint _floorPrice,
+        string _planName,
         string _planDescription,
         address owner) public returns (Plan) {
         Plan newPlan = new Plan(_initialSlope,
@@ -23,6 +24,7 @@ contract PlanRegistry {
           _intermediatePhase,
           _intermediateIntersection,
           _floorPrice,
+          _planName,
           _planDescription
         );
         newPlan.setOwner(owner);

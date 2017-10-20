@@ -14,7 +14,6 @@ class UserWidget extends Component {
   }
 
   handleOpen = () => {
-    console.log('yesss')
     this.setState({isModalOpen: true})
   }
 
@@ -37,7 +36,7 @@ class UserWidget extends Component {
     ]
 
     return (
-      <div>
+      <div className='user-sub-widget'>
         <h1>Your Subscription</h1>
         <h4>Your Balance:</h4>
         <h4>Remaining Subscription:</h4>

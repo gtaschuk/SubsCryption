@@ -17,6 +17,7 @@ module.exports = (deployer, network, accounts) => {
   const intermediatePhase = 2
   const intermediateIntersection =  10000
   const floorPrice = 5000
+
   const planDescription = "This is a test plan...."
 
   let deployedPlanRegistry
@@ -34,6 +35,7 @@ module.exports = (deployer, network, accounts) => {
         , intermediatePhase
         , intermediateIntersection
         , floorPrice
+        , "Spotify plan"
         , planDescription
         , plan1Owner
         , { from: admin }),
@@ -44,6 +46,7 @@ module.exports = (deployer, network, accounts) => {
         , intermediatePhase
         , intermediateIntersection
         , floorPrice
+        , "Netflix plan"
         , planDescription
         , plan2Owner
         , { from: admin }),
