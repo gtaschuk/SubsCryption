@@ -40,6 +40,31 @@ contract Plan is Owned {
         _;
     }
 
+    event PlanCreatedLog(
+        int _initialSlope,
+        int _intermediateSlope,
+        uint _initialPhase,
+        uint _initialIntersection,
+        uint _intermediatePhase,
+        uint _intermediateIntersection,
+        uint _floorPrice,
+        string _planName,
+        string _planDescription);
+    event getCostLog(uint subscriptionAge, uint cost);
+    event addBalanceLog(uint addedBalance);
+    event payUpfrontLog(uint timeSpan, uint prepayAmount);
+    event isContinuousModeLog(address subscriber, bool isContinuous);
+    event calculateAreaLog(uint startTime, uint endTime, uint area);
+    event getEndTimeLog(uint startTime, uint balance, uint endTime);
+    event calculateExpirationLog(address subscriber, uint expirationTime);
+    event isActiveLog(address subscriber, uint targetTime, bool isIndeed);
+    event getBalanceLog(address subscriber, uint balance);
+    event getPrepayAmountLog(uint prepayAmount, uint timeSpan, uint amount);
+    event calculatePlanBalanceLog(uint BalanceOftheServiceProvider);
+    event withdrawFundsForSubscriberLog(address subscriber, uint withdrawable);
+    event withdrawPrePaidBalanceForServiceProviderLog(uint amount);
+    event withdrawBalanceForSubscriberLog(uint amount);
+    
     function Plan(
         int _initialSlope,
         int _intermediateSlope,
@@ -64,6 +89,18 @@ contract Plan is Owned {
         floorPrice = _floorPrice;
         planDescription = _planDescription;
         name = _planName;
+        
+        PlanCreatedLog(
+            initialSlope,
+            intermediateSlope,
+            initialPhase,
+            initialIntersection,
+            intermediatePhase,
+            intermediateIntersection,
+            floorPrice,
+            name,
+            planDescription
+        );
     }
 
     function getCost(uint subscriptionAge) constant public returns(uint cost) {
