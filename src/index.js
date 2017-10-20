@@ -17,7 +17,7 @@ import logger from 'redux-logger'
 import './index.css'
 
 import Home from './layouts/home/Home'
-import Dashboard from './layouts/dashboard/Dashboard'
+import Plan from './layouts/plan/Plan'
 
 // Redux DevTools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -47,7 +47,7 @@ ReactDOM.render(
         <Router history={history}>
           <Route path="/admin" component={App}>
             <IndexRoute component={Home} />
-            <Route path="dashboard" component={Dashboard} />
+            <Route path="plan/:planAddress" component={Plan} />
           </Route>
           <Route path="/website" component={SpotifyExample}>
           </Route>
