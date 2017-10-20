@@ -6,9 +6,15 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
+.player-container {
+  margin-top: 10%;
+  width: 70%;
+}
+
 .player-container, .player-container .info-and-control .time-and-volume, .player-container .info-and-control .control-container, .player-container .info-and-control .control-container .mode-control, .player-container .info-and-control .control-container .controls {
   display: -ms-flexbox;
-  display: flex; }
+  display: flex;
+}
 
 .player-container .info-and-control {
   display: -ms-flexbox;
@@ -22,6 +28,42 @@
 .icon {
   cursor: pointer;
   color: #4a4a4a; }
+
+.user-sub-widget {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #3151d9;
+  width: 25%;
+  padding: 45px;
+  border-radius: 3px;
+  margin-top: 25px;
+  margin-right: 25px;
+  color: white;
+  background-image: url(http://consensys.net/img/logo.svg);
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-position-x: 90%;
+  background-position-y: 20%;
+}
+
+.preference-dialog h1 {
+  color: white;
+}
+
+.preference-dialog button {
+  background-color: #e8e8e8!important;
+  margin-right: 3px!important;
+}
+
+.preference-dialog button span {
+  color: black!important;
+  font-weight: bold!important;
+}
+
+.preference-dialog > div > div > div {
+  background-color: #3151d9!important;
+}
 
 .player-container {
   -ms-flex-wrap: wrap-reverse;
