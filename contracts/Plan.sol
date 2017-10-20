@@ -5,10 +5,14 @@ import './Owned.sol';
 
 contract Plan is Owned {
 
-    uint public startingPrice;
+    int public initialSlope;
+    int public intermediateSlope;
+    uint public initialPhase;
+    uint public initialIntersection;
+    uint public intermediatePhase;
+    uint public intermediateIntersection;
     uint public floorPrice;
-    uint public steepness;
-    uint public inflectionPoint;
+
     string public planDescription;
 
     uint public upfrontPayments;
@@ -35,9 +39,39 @@ contract Plan is Owned {
         _;
     }
 
-
+    function Plan(  
+        int _initialSlope, 
+        int _intermediateSlope, 
+        uint _initialPhase, 
+        uint _initialIntersection, 
+        uint _intermediatePhase, 
+        uint _intermediateIntersection, 
+        uint _floorPrice, 
+        string _planDescription) public{
+        
+        require(_initialSlope<=0); 
+        require(_intermediateSlope<=0);
+        
+        initialSlope = _initialSlope;
+        intermediateSlope = _intermediateSlope;
+        initialPhase = _initialPhase;
+        intermediatePhase = _intermediatePhase;
+        initialIntersection = _initialIntersection;
+        intermediateIntersection = _intermediateIntersection;
+        floorPrice = _floorPrice;
+        planDescription = _planDescription;
+        
+    }
     function getCost(uint subscriptionAge) constant public returns(uint cost) {
-      return 100;
+      if(subscriptionAge > intermediatePhase){
+        return floorPrice;
+      }
+
+      if(subscriptionAge > initialPhase){
+        return intermediateSlope*subscriptionAge + intermediateIntersection;
+      }
+
+      return initialSlope*subscriptionAge + intermediatePhase;
     }
 
     /**
@@ -135,17 +169,74 @@ contract Plan is Owned {
       return info.payUpfrontExpirationTime < block.timestamp;
     }
 
-    function calculateArea(uint start, uint end) public returns(uint);
+    function calculateArea(uint start, uint end) public returns(uint area) {
+        require(start<end);
+        if (start > intermediatePhase){
+            return (end-start)*floorPrice;
+        }
 
-    // inverse of integral function
-    function getEndTime(uint balance, uint startTime)
-        constant
-        public
-        returns(uint endTime)
-    {
-        return 0;
+        if(start>initialPhase){
+            if(end<intermediatePhase){
+                return calculateSlopeColumnArea(start, end, intermediateSlope, intermediateIntersection);
+            }
+            
+            return calculateSlopeColumnArea(start, intermediatePhase, intermediateSlope, intermediateIntersection) + (end - intermediatePhase)*floorPrice;
+        }
+        
+        if (end < initialPhase) {
+            return calculateSlopeColumnArea(start, end, initialSlope, initialIntersection);
+        }
+            
+        return calculateSlopeColumnArea(start, initialPhase, initialSlope, initialIntersection) 
+            + calculateSlopeColumnArea(intialPhase, end, intermediateSlope, intermediateIntersection);
     }
-
+    
+    function calculateSlopeColumnArea(uint start, uint end, int slope, uint intersection) returns(uint area){
+        uint endCost = getCost(end);
+        return (end-start)*endCost + ((end-start)*(getCost(start)-endCost)/2);
+    }
+    
+    function getEndTime(uint start, uint balance) 
+        constant 
+        public 
+        returns(uint end)
+    {
+        if(start>intermediatePhase){
+            return balance/floorPrice + start;
+        }
+        
+        if(start > initialPhase){
+            uint intermediateArea = calculateArea(start, intermediatePhase);
+            if(intermediateArea > balance){
+                return getEndTimeHelper(balance, intermediateSlope, intermediateIntersection, start);
+            } 
+            
+            return (balance - intermediateArea)/floorPrice + start;
+        }
+        
+        uint initialArea = calculateArea(start, initialPhase);
+        if(initialArea > balance){
+            return getEndTimeHelper(balance, initialSlope, initialIntersection, start);
+        }
+        
+        return getEndTimeHelper(balance - initialArea, intermediateSlope, intermediateIntersection, start);
+        
+    }
+    
+    function getEndTimeHelper(uint balance, uint slope, uint intersection, uint start){
+        uint z = slope*(start**2)/2 + intersection*start - balance;
+        return sqrt((intersection/slope)**2 + z/slope) - intersection/slope;
+    }
+    
+    function sqrt(uint x) returns (uint y) {
+        uint z = (x + 1) / 2;
+        y = x;
+        while (z < y) {
+            y = z;
+            z = (x / z + z) / 2;
+        }
+    }
+    
     /**
      * Calculate when the balance expires or until when the user
      * has paid.
