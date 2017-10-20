@@ -21,20 +21,6 @@ class UserWidget extends Component {
     this.setState({isModalOpen: false})
   }
   render() {
-    const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.handleClose}
-      />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        disabled={true}
-        onClick={this.handleClose}
-      />,
-    ]
-
     return (
       <div className='user-sub-widget'>
         <h1>Your Subscription</h1>
@@ -42,15 +28,14 @@ class UserWidget extends Component {
         <h4>Remaining Subscription:</h4>
         <RaisedButton label="Modal Dialog" onClick={this.handleOpen} />
         <Dialog
-          actions={actions}
-          modal={true}
+          className="preference-dialog"
           open={this.state.isModalOpen}
+          onRequestClose={this.handleClose}
         >
           <UserUpdate/>
         </Dialog>
       </div>
     )
-    // title="Dialog With Actions"
   }
 }
 

@@ -51,6 +51,10 @@
   color: white;
 }
 
+.preference-dialog label, .preference-dialog input {
+  color: white!important;
+}
+
 .preference-dialog button {
   background-color: #e8e8e8!important;
   margin-right: 3px!important;
