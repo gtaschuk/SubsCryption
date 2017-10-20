@@ -92,7 +92,7 @@ AppDrawer.contextTypes = {
 
 const mapStateToProps = state => {
     return {
-        plans: state.plans.plansArray
+        plans: state.plans.planArray
     }
 }
 

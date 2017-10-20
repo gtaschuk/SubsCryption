@@ -13,6 +13,7 @@ contract Plan is Owned {
     uint public intermediateIntersection;
     uint public floorPrice;
 
+    string public name;
     string public planDescription;
 
     uint public upfrontPayments;
@@ -47,7 +48,9 @@ contract Plan is Owned {
         uint _intermediatePhase,
         uint _intermediateIntersection,
         uint _floorPrice,
-        string _planDescription) public{
+        string _planName,
+        string _planDescription) public
+    {
 
         require(_initialSlope<=0);
         require(_intermediateSlope<=0);
@@ -60,6 +63,7 @@ contract Plan is Owned {
         intermediateIntersection = _intermediateIntersection;
         floorPrice = _floorPrice;
         planDescription = _planDescription;
+        name = _planName;
     }
 
     function getCost(uint subscriptionAge) constant public returns(uint cost) {
