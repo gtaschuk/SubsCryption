@@ -20,7 +20,7 @@ contract Plan is Owned {
 
     address[] public subscribers;
 
-    mapping (address => SubscriberInfo) subscribersInfo;
+    mapping (address => SubscriberInfo) public subscribersInfo;
 
     struct SubscriberInfo {
         uint balance;
@@ -364,5 +364,11 @@ contract Plan is Owned {
         info.balance -= amount;
         info.unwithdrawn -= amount;
         msg.sender.transfer(amount);
+    }
+
+    function getSubscribersCount() public constant 
+    returns(uint amount)
+    {
+        return subscribers.length;
     }
 }
