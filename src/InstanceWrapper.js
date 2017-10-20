@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { PropTypes } from 'prop-types'
 import getHubInstance from './utils/getHubInstance'
 import { connect } from 'react-redux'
-import { } from './actions'
+import { newPlanCreated } from './actions'
 
 class InstanceWrapper extends Component {
   constructor(props) {
@@ -31,7 +31,7 @@ class InstanceWrapper extends Component {
   //     } = response.args
   //     this.props.dispatch(newTollBoothAdded(
   //       sender,
-  //       tollBooth,
+  //       tollBooth,counts: null,
   //     ))
   //   })
   // }
@@ -87,10 +87,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addPlan : (plan) => dispatch({
-      type : 'PLAN_CREATED',
-      payload:plan
-    })
+    addPlan : (plan) => dispatch(newPlanCreated(plan))
   }
 }
 

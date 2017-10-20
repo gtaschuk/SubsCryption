@@ -16,7 +16,6 @@ import SettingsApplications from 'material-ui/svg-icons/action/settings-applicat
 class AppDrawer extends Component {
 
     render() {
-
         const styles = {
             logo: {
                 cursor: 'pointer',
@@ -93,7 +92,7 @@ AppDrawer.contextTypes = {
 
 const mapStateToProps = state => {
     return {
-        plans: state.plans.addresses
+        plans: state.plans.plansArray
     }
 }
 
