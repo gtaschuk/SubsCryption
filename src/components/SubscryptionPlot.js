@@ -5,7 +5,7 @@ require('../../node_modules/flot-axislabels/jquery.flot.axislabels.js');
 class SubscryptionPlot extends Component {
 
   getValue(t) {
-    return this.props.h * (1 - ((this.props.w * (t - this.props.s)) / (1 + this.props.w * Math.abs(t - this.props.s)))) + this.props.b
+    return parseFloat(this.props.h) * (1 - ((parseFloat(this.props.w) * (t - parseFloat(this.props.s))) / (1 + parseFloat(this.props.w) * Math.abs(t - parseFloat(this.props.s))))) + parseFloat(this.props.b)
   }
 
   getData() {
@@ -13,8 +13,8 @@ class SubscryptionPlot extends Component {
     var startMonth = 0;
     var endMonth = 12;
     var secondsInMonth = 30 * 24 * 60 * 60;
-    for (var i = startMonth; i <= endMonth*5; i++) {
-      data.push([i/5, this.getValue(i/5)]);
+    for (var i = startMonth; i <= endMonth * 5; i++) {
+      data.push([i / 5, this.getValue(i / 5)]);
     }
     return data;
   }

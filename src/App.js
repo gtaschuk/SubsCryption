@@ -10,6 +10,8 @@ import Identicon from './components/Identicon'
 import { spacing, typography } from 'material-ui/styles';
 import { white, blue600 } from 'material-ui/styles/colors';
 import Assessment from 'material-ui/svg-icons/action/assessment';
+import SettingsApplications from 'material-ui/svg-icons/action/settings-applications';
+
 
 // Styles
 import './css/oswald.css'
@@ -96,8 +98,13 @@ class App extends Component {
             </div>
             <span style={styles.avatar.span}>{this.context.accounts[0]}</span>
           </div>
-          <MenuItem containerElement={<Link to="/admin" />} leftIcon={<Assessment />}>Home</MenuItem>
-          <MenuItem containerElement={<Link to="/admin/dashboard" />} leftIcon={<Assessment />}>Dashboard</MenuItem>
+          <MenuItem containerElement={<Link to="/admin" />} leftIcon={<SettingsApplications />}>Deploy</MenuItem>
+          <MenuItem leftIcon={<Assessment />} primaryText="Subscryptions" primaryTogglesNestedList={true}
+            nestedItems={[
+              <MenuItem containerElement={<Link to="/admin/dashboard" />}>Dashboard</MenuItem>
+            ]}>
+          </MenuItem>
+
         </Drawer>
         <div style={styles.container}>
           <AppBar
