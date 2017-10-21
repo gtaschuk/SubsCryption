@@ -7,6 +7,7 @@ const initialState = {
       plansSubscribed: [],
       plansManaged: []
     },
+    websiteIsActive: false
 }
 
 const planArrayReducer = (state = initialState, action) => {
@@ -23,12 +24,13 @@ const planArrayReducer = (state = initialState, action) => {
                 planArray,
                 plansManaged,
             })
-        case actions.NEW_PLAN_CREATED:
-            const planArray = (state.planArray.indexOf(action.payload) >= 0)?
-              state.planArray
-              : [...state.planArray, action.payload]
+        case actions.SET_DISABLED:
             return Object.assign({}, state, {
-                planArray
+                websiteIsActive: false
+            })       
+        case actions.SET_ENABLED:
+            return Object.assign({}, state, {
+                websiteIsActive: true
             })
         default:
             return state;

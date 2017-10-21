@@ -192,7 +192,11 @@ class MusicPlayer extends Component {
             </div>
             <div className="controls">
               <i className="icon fa fa-step-backward" style={btnStyle} onClick={this.handlePrev.bind(this)}></i>
-              <i className={`icon fa fa-${this.state.play ? 'pause' : 'play'}`} style={btnStyle} onClick={this.handleToggle.bind(this)}></i>
+              {this.props.isActive?<i 
+                className={`icon fa fa-${this.state.play ? 'pause' : 'play'}`} 
+                style={btnStyle} 
+                onClick={this.handleToggle.bind(this)}
+              ></i>: null}
               <i className="icon fa fa-step-forward" style={btnStyle} onClick={this.handleNext.bind(this)}></i>
             </div>
           </div>

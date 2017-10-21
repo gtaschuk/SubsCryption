@@ -9,36 +9,16 @@ class SpotifyExample extends Component {
 	constructor(props){
 		super(props);
 		this.state = {isSubscribed:"0px"};
-
-		this.knowIfBlurred = this.knowIfBlurred.bind(this)
 	}
-	
-\
 
   render() {
     return (
       <div>
-        <MusicPlayer playlist={playlist} isBlurred={this.state.isSubscribed} />
+        <MusicPlayer playlist={playlist} isBlurred={this.props.websiteIsActive? "0px" : "10px"} isActive={this.props.websiteIsActive} />
         <UserWidget />
       </div>
     )
   }
-
-  knowIfBlurred(){
-  	if(this.props.planArray.length>0){
-	    this.context.PlanShell.at(this.props.planArray[0].plan)
-	    .then(planInstance => {
-	    	return planInstance.isActive(this.context.accounts[0], this.context.web3.block.timestamp)    	
-	    })
-	    .then(isSub=>{
-	    	if(isSub == 0)
-	    		this.setState({isSubscribed:"10px"});
-	    	else
-	    		this.setState({isSubscribed:"10px"});
-	    })	  		
-  	}
-  }
-
 }
 
 SpotifyExample.contextTypes = {
@@ -51,7 +31,8 @@ SpotifyExample.contextTypes = {
 
 const mapStateToProps = state => {
     return {
-    	planArray: state.plans.planArray
+    	planArray: state.plans.planArray,
+    	websiteIsActive: state.plans.websiteIsActive,
     }
 }
 
