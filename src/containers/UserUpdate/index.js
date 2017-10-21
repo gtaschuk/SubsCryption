@@ -9,7 +9,7 @@ class UserWidget extends Component {
     super(props)
 
     this.state = {
-      selectedItem : null
+      selectedItem : 'ADD_BALANCE'
     }
   }
 
@@ -30,11 +30,11 @@ class UserWidget extends Component {
     const displayBody = () => {
       switch (selectedItem) {
         case 'ADD_BALANCE':
-          return <AddBalance/>
+          return <AddBalance onRequestClose={this.props.onRequestClose}/>
         case 'WITHDRAW_BALANCE':
-          return <WithdrawBalance/>
+          return <WithdrawBalance onRequestClose={this.props.onRequestClose}/>
         case 'PAY_UP_FRONT':
-          return <PayUpFront/>
+          return <PayUpFront onRequestClose={this.props.onRequestClose}/>
         default:
           return null
       }

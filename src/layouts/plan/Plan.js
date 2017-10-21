@@ -23,6 +23,7 @@ class Plan extends Component {
             planInstance.newUserLog({ fromBlock: 0 }).get((err, users) => {
                 console.log("Users:", users);
                 var planObject = { address: address };
+                
                 planObject.users = users.map(event => {
                     return {
                         address: event.args.subscriber,
@@ -42,7 +43,12 @@ class Plan extends Component {
                         }).length
                     }
                 })
-                planInstance.name().then(name => {
+                
+                
+                planInstance.isActive(this.context.accounts[0], this.context.web3.block.timestamp).then(isSubscribed => {
+                    planObject.isSubscribed = isSubscribed;
+                    return planInstance.name();
+                }).then(name => {
                     planObject.name = name;
                     return planInstance.planDescription();
                 }).then(description => {
