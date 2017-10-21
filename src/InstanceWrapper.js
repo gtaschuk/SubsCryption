@@ -54,7 +54,7 @@ class InstanceWrapper extends Component {
         {}, { fromBlock: 0, toBlock: 'latest' }
       ).watch ( (err, response) => {
         console.log('EVENT LOG(LogPlanCreated):', response.args)
-
+        response.args.block = response.blockNumber;
         this.props.addPlan(response.args);
       })
 
