@@ -15,29 +15,32 @@ class UserWidget extends Component {
       isModalOpen : false,
       balance: 0
     }
-    this.getBalance()
+  }
+
+  componentDidMount() {
+    this.props.setTimeout(this.getBalance, 100)
   }
 
   getBalance = () => {
-    // this.context.PlanShell.at(this.props.planArray[0].plan).then( instance => {
-    //   const time = Math.round((new Date()).getTime() / 1000)
-    //   console.log('the time is:', time)
-    //   // return instance.getBalance(this.context.accounts[0])
-    //   console.log('this.context.accounts[0]')
-    //   console.log(this.context.accounts[0])
-    //   console.log('this.context.accounts[0]')
-    //   return instance.getBalanceTimeStamp(this.context.accounts[0], time)
-    //   // return instance.getBalanceTimeStamp(this.context.accounts[0], time, {gas: 3000000})
-    // })
-    // .then(balance => {
-    //   console.log('returned balance', balance.toString())
-    //   // const ethBalance = this.context.web3.fromWei(balance,'finney')
-    //
-    //   // console.log(ethBalance)
-    //   // console.log(parseInt(ethBalance.toString()))
-    //   // // this.setState()
-    // })
-    // this.props.setTimeout(this.getBalance, 1000)
+    this.context.PlanShell.at(this.props.planArray[0].plan).then( instance => {
+      const time = Math.round((new Date()).getTime() / 1000)
+      console.log('the time is:', time)
+      // return instance.getBalance(this.context.accounts[0])
+      console.log('this.context.accounts[0]')
+      console.log(this.context.accounts[0])
+      console.log('this.context.accounts[0]')
+      return instance.getBalanceTimeStamp(this.context.accounts[0], time)
+      // return instance.getBalanceTimeStamp(this.context.accounts[0], time, {gas: 3000000})
+    })
+    .then(balance => {
+      console.log('returned balance', balance.toString())
+      // const ethBalance = this.context.web3.fromWei(balance,'finney')
+
+      // console.log(ethBalance)
+      // console.log(parseInt(ethBalance.toString()))
+      // // this.setState()
+    })
+    this.props.setTimeout(this.getBalance, 1000)
   }
 
   handleOpen = () => {

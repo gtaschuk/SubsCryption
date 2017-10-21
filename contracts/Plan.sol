@@ -343,6 +343,10 @@ contract Plan is Owned {
         return 0;
     }
 
+    function getTime() public constant returns (uint) {
+        return block.timestamp;
+    }
+
     function getBalanceTimeStamp(address subscriber, uint timestamp) public constant returns (uint balance) {
         SubscriberInfo storage info  = subscribersInfo[subscriber];
         uint startTime = max(info.payUpfrontExpirationTime, info.startingTime);
