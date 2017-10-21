@@ -236,9 +236,21 @@ contract Plan is Owned {
     }
 
     function calculateArea(uint start, uint end) constant public returns(uint) {
-        uint diff = integral(int(end)) - integral(int(start));
-        uint weiDiff = diff * weiInFinney;
-        return weiDiff / secondsInMonth;
+        // int startPoint = integral(int(start));
+        // int endPoint = integral(int(end));
+        // uint diff = uint(endPoint - startPoint);
+        int timespan = int(end - start);
+        int square = timespan / precision;
+        int area = 0;
+        int t = square;
+        for (int i = 0; i < precision; i++) {
+            area += int(getCost(uint(t))) * square;
+            t += square;
+        }
+
+        uint weiDiff = uint(area) * weiInFinney;
+        uint result = weiDiff / secondsInMonth;
+        return result / 1000000000000000;
     }
 
     function abs(int x) constant private returns(int) {
