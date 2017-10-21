@@ -198,7 +198,7 @@ class MusicPlayer extends Component {
           </div>
         </div>
         <div className="cover-container">
-          <div className="cover" style={{backgroundImage: `url(${activeMusic.cover})`}}></div>
+          <div className="cover" style={{backgroundImage: `url(${activeMusic.cover})`, filter:`blur(${this.props.isBlurred})`}}></div>
         </div>
       </div>
     )

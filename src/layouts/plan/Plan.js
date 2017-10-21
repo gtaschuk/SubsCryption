@@ -42,7 +42,12 @@ class Plan extends Component {
                         }).length
                     }
                 })
-                planInstance.name().then(name => {
+                
+                
+                planInstance.isActive(this.context.accounts[0], this.context.web3.block.timestamp).then(isSubscribed => {
+                    planObject.isSubscribed = isSubscribed;
+                    return planInstance.name();
+                }).then(name => {
                     planObject.name = name;
                     return planInstance.planDescription();
                 }).then(description => {
