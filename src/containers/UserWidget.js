@@ -37,10 +37,12 @@ class UserWidget extends Component {
     }
 
     const time = Math.round((new Date()).getTime() / 1000)
-    this.state.instance.getBalanceTimeStamp(this.context.accounts[0], time)
+    this.context.PlanShell.at(this.props.planArray[0].plan).then(instance => {
+      instance.getBalanceTimeStamp(this.context.accounts[0], time)
       .then(balance => {
         this.setState({ balance: balance.toString() });
       })
+    });
 
     this.props.setTimeout(this.getBalance, 3000)
   }
