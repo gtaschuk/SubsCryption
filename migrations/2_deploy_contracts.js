@@ -10,6 +10,7 @@ module.exports = (deployer, network, accounts) => {
   const admin = accounts[0]
   const plan1Owner = accounts[1]
   const plan2Owner = accounts[2]
+  const planUser1 = accounts[3]
   const h = 450;
   const w = 15;
   const s = 2592000*4; // seconds in a month
@@ -17,6 +18,8 @@ module.exports = (deployer, network, accounts) => {
 
   const planDescription = "This is a test plan...."
 
+  let deployedPlan1
+  let deployedPlan2
   let deployedPlanRegistry
 
   deployer.deploy(PlanRegistry, {from: admin})
@@ -25,7 +28,7 @@ module.exports = (deployer, network, accounts) => {
     deployedPlanRegistry = planRegistryInstance
 
     return Promise.allNamed({
-      operator1tx: () => deployedPlanRegistry.createNewPlan(h
+      plan1tx: () => deployedPlanRegistry.createNewPlan(h
         , w
         , s
         , b
@@ -33,7 +36,7 @@ module.exports = (deployer, network, accounts) => {
         , planDescription
         , plan1Owner
         , { from: admin }),
-      operator2tx: () => deployedPlanRegistry.createNewPlan(h
+      plan2tx: () => deployedPlanRegistry.createNewPlan(h
         , w
         , s
         , b
@@ -43,4 +46,15 @@ module.exports = (deployer, network, accounts) => {
         , { from: admin }),
     })
   })
+  .then(
+    info => {
+      deployedPlan1 = Plan.at(info.plan1tx.logs[0].args.plan)
+      deployedPlan2 = Plan.at(info.plan2tx.logs[0].args.plan)
+
+      // NOTE:: use this to to create test subscribers
+      // return Promise.allNamed({
+      //   addBalance1tx: () => deployedPlan1.addBalance({ from: planUser1, value: 3000000000000 }),
+      // }
+    }
+  )
 };

@@ -33,13 +33,14 @@ class UserWidget extends Component {
       // return instance.getBalanceTimeStamp(this.context.accounts[0], time, {gas: 3000000})
     })
     .then(balance => {
-      console.log('returned balance', balance.toString())
+      this.setState({ balance: balance.toString() });
       // const ethBalance = this.context.web3.fromWei(balance,'finney')
 
       // console.log(ethBalance)
       // console.log(parseInt(ethBalance.toString()))
       // // this.setState()
     })
+
     this.props.setTimeout(this.getBalance, 1000)
   }
 
@@ -54,7 +55,7 @@ class UserWidget extends Component {
     return (
       <div className='user-sub-widget'>
         <h1>Your Subscription</h1>
-        <h4>Your Balance:</h4>
+        <h4>Your Balance: {this.state.balance} weis </h4>
         <h4>Remaining Subscription:</h4>
         <RaisedButton label="Configure" onClick={this.handleOpen} />
         <Dialog
