@@ -13,6 +13,7 @@ contract Plan is Owned {
     int scale = 100000000;
     uint secondsInMonth = 30 days;
     uint weiInFinney = 1 finney;
+    int precision = 10;
 
     string public name;
     string public planDescription;
