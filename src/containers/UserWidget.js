@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import UserUpdate from './UserUpdate'
 import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
 import ReactTimeout from 'react-timeout'
 import PropTypes from 'prop-types'
@@ -25,12 +24,6 @@ class UserWidget extends Component {
   }
 
   getBalance = () => {
-
-    if (this.props.websiteIsActive) {
-      this.props.dispatch(setDisabled())
-    } else {
-      this.props.dispatch(setEnabled())
-    }
     if (!this.props.planArray || !this.props.planArray[0]) {
       this.props.setTimeout(this.getBalance, 100)
       return;
@@ -40,6 +33,11 @@ class UserWidget extends Component {
     this.context.PlanShell.at(this.props.planArray[0].plan).then(instance => {
       instance.getBalanceTimeStamp(this.context.accounts[0], time)
       .then(balance => {
+        if (balance.gt(0)) {
+          this.props.dispatch(setEnabled());
+        } else {
+          this.props.dispatch(setDisabled());
+        }
         this.setState({ balance: balance.toString() });
       })
     });
@@ -111,7 +109,6 @@ UserWidget.contextTypes = {
 
 const mapStateToProps = (state) => ({
   planArray: state.plans.planArray,
-  websiteIsActive: state.plans.websiteIsActive,
 })
 
 export default ReactTimeout(connect(mapStateToProps)(UserWidget))
