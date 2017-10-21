@@ -12,7 +12,7 @@ class UserWidget extends Component {
     super(props)
 
     this.state = {
-      isModalOpen : false,
+      isModalOpen: false,
       balance: 0
     }
   }
@@ -22,32 +22,33 @@ class UserWidget extends Component {
   }
 
   getBalance = () => {
-    if (!this.props.planArray || !this.props.planArray[0]) {
-      this.props.setTimeout(this.getBalance, 100)
+    if (!this.props.planArray || !this.props.planArray[0] || !this.state.instance) {
+      if (!this.state.instance && this.props.planArray && this.props.planArray[0]) {
+        this.context.PlanShell.at(this.props.planArray[0].plan).then(instance => { this.state.instance = instance });
+      }
+      this.props.setTimeout(this.getBalance, 100);
       return;
     }
 
-    this.context.PlanShell.at(this.props.planArray[0].plan).then( instance => {
-      const time = Math.round((new Date()).getTime() / 1000)
-      return instance.getBalanceTimeStamp(this.context.accounts[0], time)
-    })
-    .then(balance => {
-      this.setState({ balance: balance.toString() });
-    })
+    const time = Math.round((new Date()).getTime() / 1000)
+    this.state.instance.getBalanceTimeStamp(this.context.accounts[0], time)
+      .then(balance => {
+        this.setState({ balance: balance.toString() });
+      })
 
     this.props.setTimeout(this.getBalance, 3000)
   }
 
   handleOpen = () => {
-    this.setState({isModalOpen: true})
+    this.setState({ isModalOpen: true })
   }
 
   handleClose = () => {
-    this.setState({isModalOpen: false})
+    this.setState({ isModalOpen: false })
   }
   render() {
     return (
-      <div className='user-sub-widget'>
+      <div className='user-sub-widget' style={{cursor:"pointer"}} onClick={this.handleOpen} >
         <h1>Your Subscription</h1>
         <h4>Your Balance: {this.state.balance} weis </h4>
         <h4>Remaining Subscription:</h4>
@@ -55,11 +56,11 @@ class UserWidget extends Component {
         <Dialog
           className="preference-dialog"
           autoScrollBodyContent={true}
-          contentStyle={{width:"70%",maxWidth:"none"}}
+          contentStyle={{ width: "70%", maxWidth: "none" }}
           open={this.state.isModalOpen}
-        
+
         >
-          <UserUpdate   onRequestClose={this.handleClose}/>
+          <UserUpdate onRequestClose={this.handleClose} />
         </Dialog>
       </div>
     )
