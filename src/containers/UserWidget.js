@@ -55,7 +55,7 @@ class UserWidget extends Component {
     return (
       <div className='user-sub-widget'>
         <h1>Your Subscription</h1>
-        <h4>Your Balance: {this.state.balance}</h4>
+        <h4>Your Balance: {this.state.balance} weis </h4>
         <h4>Remaining Subscription:</h4>
         <RaisedButton label="Configure" onClick={this.handleOpen} />
         <Dialog
