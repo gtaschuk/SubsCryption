@@ -6,6 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import ReactTimeout from 'react-timeout'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { setDisabled, setEnabled } from '../actions'
 
 class UserWidget extends Component {
   constructor(props) {
@@ -22,11 +23,14 @@ class UserWidget extends Component {
   }
 
   getBalance = () => {
-    if (!this.props.planArray || !this.props.planArray[0] || !this.state.instance) {
-      if (!this.state.instance && this.props.planArray && this.props.planArray[0]) {
-        this.context.PlanShell.at(this.props.planArray[0].plan).then(instance => { this.state.instance = instance });
-      }
-      this.props.setTimeout(this.getBalance, 100);
+
+    if (this.props.websiteIsActive) {
+      this.props.dispatch(setDisabled())
+    } else {
+      this.props.dispatch(setEnabled())
+    }
+    if (!this.props.planArray || !this.props.planArray[0]) {
+      this.props.setTimeout(this.getBalance, 100)
       return;
     }
 
@@ -76,7 +80,8 @@ UserWidget.contextTypes = {
 }
 
 const mapStateToProps = (state) => ({
-  planArray: state.plans.planArray
+  planArray: state.plans.planArray,
+  websiteIsActive: state.plans.websiteIsActive,
 })
 
 export default ReactTimeout(connect(mapStateToProps)(UserWidget))

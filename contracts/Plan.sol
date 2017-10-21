@@ -233,8 +233,6 @@ contract Plan is Owned {
             SubscriberInfo storage info  = subscribersInfo[subscriber];
             isContinuous = info.payUpfrontExpirationTime < block.timestamp;
         }
-
-        isContinuousModeLog(subscriber, isContinuous);
     }
 
     function calculateArea(uint start, uint end) constant public returns(uint) {

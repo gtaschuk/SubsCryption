@@ -17,11 +17,7 @@ contract('Plan Contract', accounts => {
     return Plan.deployed()
         .then(_instance => {
             instance = _instance;
-            return instance.getCost.call( subscriptionAge, { from: accounts[0] });
-        })
-        .then(cost => {
-            assert.equal(cost, shouldBeCost, "cost isnt equal to 10000");
-            return instance.call.addBalance(100);
+            return instance.addBalance.call(100);
         })
         .then(balance => {
             assert.equal(instance.balance, 100, "Balance is not updating properly");

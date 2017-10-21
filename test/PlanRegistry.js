@@ -10,27 +10,23 @@ contract('PlanRegistry', accounts => {
   it("should start the PlanRegistry Contract and .. ", function() {
     var instance;
 
-    var initialSlope;
-    var intermediateSlope;
-    var initialPhase;
-    var initialIntersection;
-    var intermediatePhase;
-    var intermediateIntersection;
-    var floorPrice;
-    var planDescription;
-    var owner;
+        var h = 0;
+        var w = 0;
+        var s = 0;
+        var b = 0;
+        var planName = "planName";
+        var planDescription = "planDescription";
+        var owner = accounts[0];
     // You *need to return* the whole Promise chain
     return PlanRegistry.deployed()
         .then(_instance => {
             instance = _instance;
             return instance.createNewPlan.call(
-                    initialSlope,
-                    intermediateSlope,
-                    initialPhase,
-                    initialIntersection,
-                    intermediatePhase,
-                    intermediateIntersection,
-                    floorPrice,
+                    h,
+                    w,
+                    s,
+                    b,
+                    planName,
                     planDescription,
                     owner,
                     { from: accounts[0] });
