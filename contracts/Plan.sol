@@ -180,11 +180,15 @@ contract Plan is Owned {
         */
         uint prepayAmount;
         uint change;
-        SubscriberInfo storage info  = subscribersInfo[msg.sender];
+        SubscriberInfo storage info = subscribersInfo[msg.sender];
         if (!isActive(msg.sender, block.timestamp)) {
-            prepayAmount = getPrepayAmount(block.timestamp, timeSpan);
+            prepayAmount = getPrepayAmountInternal(msg.sender, timeSpan, false);
             require(prepayAmount <= msg.value);
             change =  msg.value - prepayAmount;
+            if (info.startingTime == 0) {
+                newUserLog(msg.sender);
+                subscribers.push(msg.sender);
+            }
             info.startingTime = block.timestamp;
             info.payUpfrontExpirationTime = info.startingTime + timeSpan;
             info.balance = change;
@@ -192,7 +196,7 @@ contract Plan is Owned {
             upfrontPayments += prepayAmount;
         }
         else if (isContinuousMode(msg.sender)) {
-            prepayAmount = getPrepayAmount(block.timestamp, timeSpan);
+            prepayAmount = getPrepayAmountInternal(msg.sender, timeSpan, true);
             require(prepayAmount <= msg.value);
             change =  msg.value - prepayAmount;
             info.balance -= calculateArea(info.startingTime, block.timestamp) + change;
@@ -202,7 +206,7 @@ contract Plan is Owned {
         }
         else{
             // otherwise it's in prepayment mode
-            prepayAmount = getPrepayAmount(info.payUpfrontExpirationTime, timeSpan);
+            prepayAmount = getPrepayAmountInternal(msg.sender, timeSpan, true);
             require(prepayAmount <= msg.value);
             change =  msg.value - prepayAmount;
             info.balance += change;
@@ -308,7 +312,7 @@ contract Plan is Owned {
             return true;
         }
         uint startTime = max(info.payUpfrontExpirationTime, info.startingTime);
-        require(targetTime > startTime);
+        require(targetTime >= startTime);
         uint cost = calculateArea(startTime, targetTime);
         if (info.balance > cost) {
             return true;
@@ -343,7 +347,11 @@ contract Plan is Owned {
         return 0;
     }
 
-    function getBalance(address subscriber, uint timestamp) public constant returns (uint balance) {
+    function getTime() public constant returns (uint) {
+        return block.timestamp;
+    }
+
+    function getBalanceTimeStamp(address subscriber, uint timestamp) public constant returns (uint balance) {
         SubscriberInfo storage info  = subscribersInfo[subscriber];
         uint startTime = max(info.payUpfrontExpirationTime, info.startingTime);
         uint used = calculateArea(startTime, timestamp);
@@ -360,10 +368,28 @@ contract Plan is Owned {
      * @param timeSpan how much time you want to prepay for?
      */
     function getPrepayAmount(
-        uint prepayStartTime,
+        address subscriber,
         uint timeSpan
     ) public constant returns (uint amount) {
-        return getCost(prepayStartTime + timeSpan) * timeSpan;
+        bool active = isActive(subscriber, block.timestamp);
+        return getPrepayAmountInternal(subscriber, timeSpan, active);
+    }
+
+    function getPrepayAmountInternal(
+        address subscriber,
+        uint timeSpan,
+        bool isActive
+    ) private constant returns (uint amount) {
+        uint prepayAmount;
+        uint change;
+        SubscriberInfo storage info = subscribersInfo[subscriber];
+        if (!isActive) {
+            return getCost(timeSpan) * (timeSpan / secondsInMonth);
+        }
+        else {
+            uint diff = max(info.payUpfrontExpirationTime, info.startingTime) - info.startingTime;
+            return getCost(diff + timeSpan) * (timeSpan / secondsInMonth);
+        }
     }
 
     /*
