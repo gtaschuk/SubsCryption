@@ -13,7 +13,8 @@ class SpotifyExample extends Component {
 
   render() {
     return (
-      <div>
+      <div className={'website-container'}>
+        <h1>Fake Spotify</h1>
         <MusicPlayer playlist={playlist} isBlurred={this.props.websiteIsActive? "0px" : "10px"} isActive={this.props.websiteIsActive} />
         <UserWidget />
       </div>

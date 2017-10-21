@@ -79,3 +79,8 @@ code {
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
+
+.website-container {
+  margin: 50px;
+}

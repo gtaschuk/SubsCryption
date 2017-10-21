@@ -28,13 +28,15 @@ class MusicPlayer extends Component {
       play: this.props.autoplay || false,
       playMode: 'loop',
       progress: 0,
-      volume: 1
+      volume: 1,
+      wasPlaying: false
     }
     this.modeList = ['loop', 'random', 'repeat']
   }
 
   componentDidMount() {
     const audioContainer = this.audioContainer
+    window.audioContainer = this.audioContainer
     audioContainer.addEventListener('timeupdate', this.updateProgress.bind(this))
     audioContainer.addEventListener('ended', this.end.bind(this))
   }
@@ -100,6 +102,25 @@ class MusicPlayer extends Component {
     this.setState({ play: !this.state.play })
   }
 
+  pauseNoMatterWhat() {
+    this.audioContainer.pause()
+    this.setState({
+      ...this.state, 
+      play: false,
+      wasPlaying: this.state.play
+    })
+  }
+
+  resumeService() {
+    if (this.state.wasPlaying) {
+      this.audioContainer.play()
+      this.setState({ 
+        ...this.state,
+        play: !this.state.play
+      })
+    }
+  }
+
   handlePrev() {
     const total = this.props.playlist.length
     const activeMusicIndex = this.state.activeMusicIndex > 0 ? this.state.activeMusicIndex - 1 : total - 1
@@ -148,6 +169,20 @@ class MusicPlayer extends Component {
     const activeMusic = playlist[activeMusicIndex]
     const playModeClass = playMode === 'loop' ? 'refresh' : playMode === 'random' ? 'random' : 'repeat'
     const btnStyle = {color: btnColor}
+
+    if (this.props.isActive) {
+      // this.handleToggle().bind(this)
+      // this.resumeService().bind(this)
+      if (this.state.play) {
+        window.audioContainer.play()  
+      }
+    } else {
+      // this.pauseNoMatterWhat().bind(this)
+      if (this.state.play) {
+        window.audioContainer.pause()  
+      }
+      
+    }
 
     return (
       <div className="player-container" style={this.props.style}>
