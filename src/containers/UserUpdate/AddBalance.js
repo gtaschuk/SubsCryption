@@ -35,6 +35,7 @@ class AddBalance extends Component {
     // TODO:: hard coding this now, not checking for null.
     const planInstance = PlanShell.at(planArray[0].plan)
     addBalance(planInstance, accounts[0], web3.toWei(amount, 'ether'))
+    this.props.onRequestClose();
   }
   render() {
     const {

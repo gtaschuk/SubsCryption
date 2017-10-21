@@ -65,7 +65,13 @@ class PayUpFront extends Component {
     }
 
     payUpfront = () => {
-        
+        this.context.PlanShell.at(this.props.planArray[0].plan).then(planInstance => {
+            planInstance.payUpfront(this.state.months*30*24*3600,{from:this.context.accounts[0],value:this.context.web3.toWei(this.state.etherAmount+0.0001,"ether")}).then(
+                tx=>{
+                    this.props.onRequestClose();
+                }
+            )
+        })
     }
 
     render = () => {
@@ -86,7 +92,7 @@ class PayUpFront extends Component {
                         value={this.state.months}
                     /><br /></div>
                 {this.state.etherAmount ? <p style={{ color: "white", textAlign: "center" }}>
-                    You are saving {1 - Math.floor(100 * this.state.etherAmount / this.state.areaAmount)} % !!!
+                    You are saving {100 - Math.floor(100 * (this.state.etherAmount / this.state.areaAmount))} % !!!
                     </p> : <p></p>}
                 <RaisedButton
                     label='Pay upfront'

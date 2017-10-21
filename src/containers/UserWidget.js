@@ -62,9 +62,9 @@ class UserWidget extends Component {
           autoScrollBodyContent={true}
           contentStyle={{width:"70%",maxWidth:"none"}}
           open={this.state.isModalOpen}
-          onRequestClose={this.handleClose}
+        
         >
-          <UserUpdate/>
+          <UserUpdate   onRequestClose={this.handleClose}/>
         </Dialog>
       </div>
     )
