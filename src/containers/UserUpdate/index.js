@@ -2,11 +2,8 @@ import React, { Component } from 'react'
 import RaisedButton from 'material-ui/RaisedButton';
 import AddBalance from './AddBalance'
 import WithdrawBalance from './WithdrawBalance'
+import PayUpFront from './PayUpFront'
 
-
-const PayUpFront = () => {
-  return <p>pay upfront</p>
-}
 class UserWidget extends Component {
   constructor(props) {
     super(props)
@@ -44,7 +41,7 @@ class UserWidget extends Component {
     }
     return (
       <div>
-        <h1>Update your Preferences</h1>
+        <h1>Update your subscription</h1>
         <RaisedButton label="Add Balance"
           style={style}
           onClick={() => this.setSelectedItem('ADD_BALANCE')}
