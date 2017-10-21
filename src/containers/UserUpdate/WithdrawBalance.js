@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
-import { addBalance } from '../../actions/userActions'
+import { withdrawBalance } from '../../actions/userActions'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
@@ -18,7 +18,7 @@ class WithdrawBalance extends Component {
   setAmount = (event, amount) => {
     this.setState({ ...this.state, amount: (amount>0)? amount : 0 })
   }
-  submitSetAmount = () => {
+  submitWithdrawAmount = () => {
     const {
       web3,
       PlanShell,
@@ -34,7 +34,7 @@ class WithdrawBalance extends Component {
     console.log('Add PlanShell', PlanShell)
     // TODO:: hard coding this now, not checking for null.
     const planInstance = PlanShell.at(planArray[0].plan)
-    addBalance(planInstance, accounts[0], web3.toWei(amount, 'ether'))
+    withdrawBalance(planInstance, accounts[0], web3.toWei(amount, 'ether'))
   }
   render() {
     const {
