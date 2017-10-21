@@ -308,7 +308,7 @@ contract Plan is Owned {
             return true;
         }
         uint startTime = max(info.payUpfrontExpirationTime, info.startingTime);
-        require(targetTime > startTime);
+        require(targetTime >= startTime);
         uint cost = calculateArea(startTime, targetTime);
         if (info.balance > cost) {
             return true;
