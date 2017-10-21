@@ -20,6 +20,7 @@ class SubscryptionPlot extends Component {
   }
 
   render() {
+    
     var options = {
       series: {
         lines: {
@@ -50,10 +51,17 @@ class SubscryptionPlot extends Component {
     }
 
     var data = [{ lines: { show: true, fill: true }, label: ' Price chart', data: this.getData() }];
-
+    if(this.props.upfront>0){
+      var upfrontSeries = {lines:{show:true,fill:true},label:' Upfront price',data:[]};
+      var finalPrice = this.getValue(this.props.upfront*30*24*60*60)/1000;
+      for (var i = 0; i <= this.props.upfront * 5; i++) {
+        upfrontSeries.data.push([i / 5, finalPrice]);
+      }
+      data.push(upfrontSeries);
+    }
     return (
       <div>
-        <ReactFlot id="subscryption-chart" options={options} data={data} width="100%" height="500px" />
+        <ReactFlot id="subscryption-chart" options={options} data={data} width="100%" height="400px" />
       </div>
     )
   }

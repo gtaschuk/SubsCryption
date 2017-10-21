@@ -12,7 +12,7 @@ module.exports = (deployer, network, accounts) => {
   const plan2Owner = accounts[2]
   const h = 450;
   const w = 15;
-  const s = 2592000; // seconds in a month
+  const s = 2592000*4; // seconds in a month
   const b = 200;
 
   const planDescription = "This is a test plan...."

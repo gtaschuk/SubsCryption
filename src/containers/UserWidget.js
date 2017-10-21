@@ -29,6 +29,8 @@ class UserWidget extends Component {
         <RaisedButton label="Configure" onClick={this.handleOpen} />
         <Dialog
           className="preference-dialog"
+          autoScrollBodyContent={true}
+          contentStyle={{width:"70%",maxWidth:"none"}}
           open={this.state.isModalOpen}
           onRequestClose={this.handleClose}
         >
