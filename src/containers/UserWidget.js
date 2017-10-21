@@ -52,7 +52,7 @@ class UserWidget extends Component {
   }
   render() {
     return (
-      <div className='user-sub-widget' style={{cursor:"pointer"}} onClick={this.handleOpen} >
+      <div className='user-sub-widget' style={{ cursor: "pointer" }} onClick={this.handleOpen} >
         <h1>Your Subscription</h1>
         <h4>Your Balance: {this.state.balance} weis </h4>
         <h4>Remaining Subscription:</h4>

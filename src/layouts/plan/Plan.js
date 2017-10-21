@@ -23,7 +23,7 @@ class Plan extends Component {
             planInstance.newUserLog({ fromBlock: 0 }).get((err, users) => {
                 console.log("Users:", users);
                 var planObject = { address: address };
-                
+
                 planObject.users = users.map(event => {
                     return {
                         address: event.args.subscriber,
@@ -36,34 +36,38 @@ class Plan extends Component {
                 for (var i = 0; i < 10; i++) {
                     planObject.userAmountByTime.push(maxTime * i / 10);
                 }
-                planObject.userAmountByTime = planObject.userAmountByTime.map((time, index, array )=> {
+                planObject.userAmountByTime = planObject.userAmountByTime.map((time, index, array) => {
                     return {
                         pv: sortedUsers.filter(user => {
                             return user.time > time && (index === array.length - 1 || user.time < array[index + 1]);
                         }).length
                     }
                 })
-                
-                
-                planInstance.isActive(this.context.accounts[0], this.context.web3.block.timestamp).then(isSubscribed => {
-                    planObject.isSubscribed = isSubscribed;
-                    return planInstance.name();
-                }).then(name => {
-                    planObject.name = name;
-                    return planInstance.planDescription();
-                }).then(description => {
-                    planObject.planDescription = description;
-                    return planInstance.calculatePlanBalance();
-                }).then(balance => {
-                    planObject.balance = context.web3.fromWei(balance, "ether").toNumber();
-                    return Promise.all(users.map(user => planInstance.subscribersInfo(user.args.subscriber)));
-                }).then(info => {
-                    console.log(info);
-                    planObject.longTermSubscribers = info.map(array => {
-                        return { length: array[2].minus(array[3]).div(60 * 60 * 24).toNumber() };
-                    }).filter(data => data.length > 0);
-                    this.setState(Object.assign({}, this.state, { plan: planObject }));
-                })
+
+                Promise.all(planObject.users.map(user => planInstance.isActive(user.address, Date.now() / 1000)))
+                    .then(areActive => {
+                        planObject.users = planObject.users.map((user, index) => {
+                            user.isActive = areActive[index]
+                            return user;
+                        })
+                        return planInstance.name();
+                    })
+                    .then(name => {
+                        planObject.name = name;
+                        return planInstance.planDescription();
+                    }).then(description => {
+                        planObject.planDescription = description;
+                        return planInstance.calculatePlanBalance();
+                    }).then(balance => {
+                        planObject.balance = context.web3.fromWei(balance, "ether").toNumber();
+                        return Promise.all(users.map(user => planInstance.subscribersInfo(user.args.subscriber)));
+                    }).then(info => {
+                        console.log(info);
+                        planObject.longTermSubscribers = info.map(array => {
+                            return { length: array[2].minus(array[3]).div(60 * 60 * 24).toNumber() };
+                        }).filter(data => data.length > 0);
+                        this.setState(Object.assign({}, this.state, { plan: planObject }));
+                    })
             });
         })
     }
@@ -108,8 +112,8 @@ class Plan extends Component {
                                 <div className="col-xs-12 col-sm-6 col-md-4 col-lg-4 m-b-15 ">
                                     <InfoBox Icon={Assessment}
                                         color={purple600}
-                                        title="Subscription length"
-                                        value={"" + this.state.plan.longTermSubscribers.reduce((prev, curr, list) => prev + curr / list.length, 0).toFixed(2)}
+                                        title="Subscription length (days)"
+                                        value={"" + this.state.plan.longTermSubscribers.reduce((prev, curr) => { return prev + curr.length / this.state.plan.longTermSubscribers.length }, 0).toFixed(2)}
                                     />
                                 </div>
                             </div>
@@ -119,9 +123,9 @@ class Plan extends Component {
                                 </div>
                                 <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 m-b-15 ">
                                     <BrowserUsage data={[
-                                        { name: 'Chrome', value: 800, color: cyan600 },
-                                        { name: 'Firefox', value: 300, color: pink600 },
-                                        { name: 'Safari', value: 300, color: purple600 }
+                                        { name: 'Active users', value: this.state.plan.users.filter(user => user.isActive).length, color: cyan600 },
+                                        { name: 'Inactive users', value: this.state.plan.users.filter(user => !user.isActive).length, color: pink600 },
+                               
                                     ]} />
                                 </div>
                             </div>
